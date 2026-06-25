@@ -124,3 +124,77 @@ export async function updateDossierStatut(dossierId: string, statut: string) {
   revalidatePath(`/dashboard/client`);
   return { ok: true };
 }
+
+export async function genererRapportFinal(dossierId: string, resultat: 'positif' | 'negatif') {
+  const supabase = createServerSupabaseClient();
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  const { data: dossier, error: fetchError } = await supabase
+    .from('dossiers')
+    .select('rapport_data')
+    .eq('id', dossierId)
+    .single();
+
+  if (fetchError || !dossier) {
+    return { ok: false, error: 'Dossier introuvable.' };
+  }
+
+  const currentReport = (dossier.rapport_data as Record<string, any>) || {};
+
+  const rapportFinal = {
+    resultat,
+    date_cloture: new Date().toISOString(),
+    actions_realisees: [
+      'Analyse approfondie du dossier et des pièces fournies.',
+      'Envoi d\'une mise en demeure structurée à l\'organisme.',
+      'Négociation amiable avec la partie prenante.',
+      resultat === 'positif'
+        ? 'Obtention d\'un accord favorable pour le client.'
+        : 'La partie prenante refuse de trouver un accord amiable.',
+    ],
+    conclusion:
+      resultat === 'positif'
+        ? 'La médiation a abouti à un accord satisfaisant. Le client peut valider les termes proposés.'
+        : 'La médiation n\'a pas abouti. Le dossier est transmis à un avocat partenaire pour la suite contentieuse.',
+    recommandations_suivantes:
+      resultat === 'positif'
+        ? ['Valider l\'accord par écrit.', 'Conserver une copie de la transaction.', 'Clôturer le dossier.']
+        : ['Contacter l\'avocat partenaire.', 'Préparer les pièces pour la procédure contentieuse.', 'Suivre les recommandations de l\'avocat.'],
+  };
+
+  const newStatut = resultat === 'positif' ? 'mediation_terminee' : 'avocat';
+
+  const { error: updateError } = await supabase
+    .from('dossiers')
+    .update({
+      statut: newStatut,
+      date_cloture: new Date().toISOString(),
+      rapport_data: {
+        ...currentReport,
+        negotiator_report: rapportFinal,
+      },
+    })
+    .eq('id', dossierId);
+
+  if (updateError) {
+    console.error('Erreur génération rapport final:', updateError);
+    return { ok: false, error: updateError.message };
+  }
+
+  await supabase.from('historique_actions').insert({
+    dossier_id: dossierId,
+    user_id: session?.user.id,
+    action: 'rapport_final_genere',
+    details: { resultat, statut: newStatut },
+  });
+
+  revalidatePath(`/dashboard/negotiator/dossiers/${dossierId}`);
+  revalidatePath(`/dashboard/client/rapport`);
+  revalidatePath(`/dashboard/client`);
+  revalidatePath('/dashboard/negotiator');
+
+  return { ok: true };
+}

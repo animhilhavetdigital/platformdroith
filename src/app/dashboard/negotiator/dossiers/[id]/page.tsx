@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, User, Phone, Mail, Calendar, XCircle } from 'lucide-react';
+import { ArrowLeft, User, Phone, Mail, Calendar, XCircle, CheckCircle } from 'lucide-react';
 import PreviewScenarioNav from '@/components/client/PreviewScenarioNav';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import {
@@ -13,7 +13,7 @@ import {
 import { devStore } from '@/lib/dev-store';
 import { createServerSupabaseClient } from '@/lib/supabase';
 import { getStatusColor, getStatusLabel } from '@/lib/utils';
-import { initMediationEtapes, updateDossierStatut } from './actions';
+import { initMediationEtapes, updateDossierStatut, genererRapportFinal } from './actions';
 import EtapesForm from './EtapesForm';
 
 interface Props {
@@ -110,7 +110,39 @@ export default async function NegotiatorDossierDetail({ params, searchParams }: 
             </div>
             <p className="text-sm text-gray-500">Mediation - Offre 2</p>
           </div>
-          {dossier.statut !== 'cloture' && (
+          {dossier.statut === 'mediation_en_cours' && (
+            <div className="flex items-center gap-3">
+              <form
+                action={async () => {
+                  'use server';
+                  await genererRapportFinal(params.id, 'positif');
+                }}
+              >
+                <button
+                  type="submit"
+                  className="flex items-center gap-2 rounded-xl bg-success-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-success-600/20 transition-all hover:scale-[1.02] hover:bg-success-700"
+                >
+                  <CheckCircle size={16} />
+                  Accord positif
+                </button>
+              </form>
+              <form
+                action={async () => {
+                  'use server';
+                  await genererRapportFinal(params.id, 'negatif');
+                }}
+              >
+                <button
+                  type="submit"
+                  className="flex items-center gap-2 rounded-xl bg-danger-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-danger-600/20 transition-all hover:scale-[1.02] hover:bg-danger-700"
+                >
+                  <XCircle size={16} />
+                  Négatif — Relais avocat
+                </button>
+              </form>
+            </div>
+          )}
+          {dossier.statut !== 'mediation_en_cours' && dossier.statut !== 'cloture' && (
             <form
               action={async () => {
                 'use server';

@@ -6,21 +6,41 @@ import {
   isDevAccessEnabled,
   normalizePreviewAdminScenario,
 } from '@/lib/dev-access';
+import { createServerSupabaseClient } from '@/lib/supabase';
+import { redirect } from 'next/navigation';
 import UsersContent from './UsersContent';
 
 interface Props {
   searchParams?: { scenario?: string };
 }
 
-export default function AdminUsersPage({ searchParams }: Props) {
+export default async function AdminUsersPage({ searchParams }: Props) {
   const previewScenario = normalizePreviewAdminScenario(searchParams?.scenario);
   const isPreview = isDevAccessEnabled();
-  const previewData = isPreview ? getPreviewAdminData(previewScenario) : null;
+
+  let users: any[] = [];
+
+  if (isPreview) {
+    const previewData = getPreviewAdminData(previewScenario);
+    users = previewData.users;
+  } else {
+    const supabase = createServerSupabaseClient();
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Erreur récupération utilisateurs:', error);
+    }
+
+    users = data || [];
+  }
 
   return (
     <DashboardLayout allowedRoles={['super_admin']}>
       <div className="space-y-6">
-        {isPreview && previewData && (
+        {isPreview && (
           <PreviewScenarioNav
             currentPath="/dashboard/admin/users"
             currentScenario={previewScenario}
@@ -31,13 +51,7 @@ export default function AdminUsersPage({ searchParams }: Props) {
           />
         )}
 
-        {isPreview && previewData ? (
-          <UsersContent data={previewData} />
-        ) : (
-          <div className="rounded-2xl border border-gray-200 bg-white p-12 text-center shadow-sm">
-            <p className="text-gray-500">Liste des utilisateurs en cours de developpement.</p>
-          </div>
-        )}
+        <UsersContent users={users} isPreview={isPreview} />
       </div>
     </DashboardLayout>
   );

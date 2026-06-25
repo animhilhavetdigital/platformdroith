@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { createBrowserSupabaseClient } from '@/lib/supabase-browser';
 import { useRouter } from 'next/navigation';
 import { confirmUploadComplete } from './actions';
-import { Upload, CheckCircle, File, X, Loader2 } from 'lucide-react';
+import { Upload, CheckCircle, File, X, Loader2, ClipboardList } from 'lucide-react';
 
 const DOCUMENT_TYPES = [
   { value: 'contrat_credit', label: 'Contrat de crédit' },
@@ -24,7 +24,22 @@ const DOCUMENT_TYPES = [
   { value: 'autre', label: 'Autre' },
 ];
 
-export default function UploadForm({ dossierId }: { dossierId: string }) {
+const RECOMMENDED_DOCS: Record<string, string[]> = {
+  'Taux usuraire': ['contrat_credit', 'offre_prealable', 'echeancier', 'releve_bancaire'],
+  'Vice caché / Conformité': ['contrat_credit', 'bon_commande', 'devis_facture', 'photo_chantier', 'attestation'],
+  'Assurance forcée': ['contrat_credit', 'offre_prealable', 'courrier_relance'],
+  'Fraude / Démarchage abusif': ['contrat_credit', 'publicite', 'sms_whatsapp', 'email', 'enregistrement'],
+  'Erreur de calcul': ['contrat_credit', 'echeancier', 'releve_bancaire'],
+  'Modification unilatérale': ['contrat_credit', 'courrier_relance', 'email'],
+  'Autre': ['contrat_credit', 'autre'],
+};
+
+interface UploadFormProps {
+  dossierId: string;
+  formulaireData?: Record<string, any> | null;
+}
+
+export default function UploadForm({ dossierId, formulaireData }: UploadFormProps) {
   const router = useRouter();
   const [files, setFiles] = useState<FileList | null>(null);
   const [docType, setDocType] = useState('autre');
@@ -34,6 +49,9 @@ export default function UploadForm({ dossierId }: { dossierId: string }) {
   const [success, setSuccess] = useState(false);
 
   const fileArray = files ? Array.from(files) : [];
+
+  const problemType = (formulaireData?.type_problème as string) || 'Autre';
+  const recommended = useMemo(() => RECOMMENDED_DOCS[problemType] || RECOMMENDED_DOCS['Autre'], [problemType]);
 
   const handleUpload = useCallback(async () => {
     if (!files || files.length === 0) {
@@ -91,7 +109,28 @@ export default function UploadForm({ dossierId }: { dossierId: string }) {
   }, [files, docType, dossierId, router]);
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
+      <div className="rounded-xl border border-amber-100 bg-amber-50 p-5">
+        <div className="mb-3 flex items-center gap-2 text-sm font-bold text-amber-800">
+          <ClipboardList size={18} />
+          Documents recommandés pour votre situation
+        </div>
+        <p className="mb-3 text-xs text-amber-700">
+          Type de problème déclaré : <strong>{problemType}</strong>
+        </p>
+        <ul className="space-y-2">
+          {recommended.map((docValue) => {
+            const label = DOCUMENT_TYPES.find((t) => t.value === docValue)?.label || docValue;
+            return (
+              <li key={docValue} className="flex items-center gap-2 text-sm text-amber-900">
+                <CheckCircle size={14} className="text-amber-600" />
+                {label}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label className="mb-2 block text-sm font-semibold text-gray-700">Type de document</label>

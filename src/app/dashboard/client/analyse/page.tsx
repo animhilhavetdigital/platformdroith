@@ -1,4 +1,4 @@
-import { CheckCircle, Clock, FileText, Loader2, Sparkles } from 'lucide-react';
+import { CheckCircle, Clock, FileText, Loader2, Sparkles, ArrowRight, BrainCircuit } from 'lucide-react';
 import PreviewScenarioNav from '@/components/client/PreviewScenarioNav';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import {
@@ -6,6 +6,10 @@ import {
   isDevAccessEnabled,
   normalizePreviewClientScenario,
 } from '@/lib/dev-access';
+import { createServerSupabaseClient } from '@/lib/supabase';
+import { redirect } from 'next/navigation';
+import Link from 'next/link';
+import { lancerAnalyse } from './actions';
 
 interface Props {
   searchParams?: { scenario?: string };
@@ -14,9 +18,35 @@ interface Props {
 export default async function ClientAnalysePage({ searchParams }: Props) {
   const isPreview = isDevAccessEnabled();
   const previewScenario = normalizePreviewClientScenario(searchParams?.scenario);
-  const dossier = isPreview ? getPreviewClientData(previewScenario).dossier : null;
+
+  let dossier: any = null;
+
+  if (isPreview) {
+    dossier = getPreviewClientData(previewScenario).dossier;
+  } else {
+    const supabase = createServerSupabaseClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      redirect('/auth/login');
+    }
+
+    const { data } = await supabase
+      .from('dossiers')
+      .select('*, documents(*)')
+      .eq('client_id', session.user.id)
+      .order('date_creation', { ascending: false })
+      .limit(1)
+      .single();
+
+    dossier = data;
+  }
+
   const analysisReady = !!dossier?.date_livraison || !!dossier?.rapport_url;
-  const waitingOnDocuments = dossier?.documents?.length === 0;
+  const waitingOnDocuments = (dossier?.documents?.length || 0) === 0 && !analysisReady;
+  const canLaunchAnalysis = dossier?.statut === 'analyse_en_cours' && !analysisReady;
 
   return (
     <DashboardLayout allowedRoles={['client']}>
@@ -74,6 +104,34 @@ export default async function ClientAnalysePage({ searchParams }: Props) {
                 ? 'Les irregularites ont ete consolidees et le memoire juridique est pret pour consultation.'
                 : 'Nous analysons vos pieces, extrayons les irregularites et redigeons votre rapport personnalise.'}
           </p>
+
+          {canLaunchAnalysis && (
+            <form
+              action={async () => {
+                'use server';
+                await lancerAnalyse(dossier.id);
+              }}
+              className="mt-8"
+            >
+              <button
+                type="submit"
+                className="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary-600/20 transition-all hover:bg-primary-700 hover:scale-[1.02]"
+              >
+                <BrainCircuit size={18} />
+                Lancer l analyse IA
+              </button>
+            </form>
+          )}
+
+          {analysisReady && (
+            <Link
+              href="/dashboard/client/rapport"
+              className="mt-8 inline-flex items-center gap-2 rounded-xl bg-success-600 px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-success-600/20 transition-all hover:bg-success-700 hover:scale-[1.02]"
+            >
+              Voir mon rapport
+              <ArrowRight size={18} />
+            </Link>
+          )}
         </div>
 
         <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
@@ -85,12 +143,12 @@ export default async function ClientAnalysePage({ searchParams }: Props) {
               {
                 icon: <CheckCircle size={18} />,
                 label: 'Formulaire complete',
-                done: !!dossier?.date_formulaire_complete || !isPreview,
+                done: !!dossier?.date_formulaire_complete,
               },
               {
                 icon: <CheckCircle size={18} />,
                 label: 'Documents deposes',
-                done: (dossier?.documents?.length || 0) > 0 || !isPreview,
+                done: (dossier?.documents?.length || 0) > 0,
               },
               {
                 icon: <Clock size={18} />,
@@ -100,7 +158,7 @@ export default async function ClientAnalysePage({ searchParams }: Props) {
               {
                 icon: <FileText size={18} />,
                 label: 'Rapport genere',
-                done: !!dossier?.rapport_url || !isPreview,
+                done: !!dossier?.rapport_url,
               },
             ].map((item) => (
               <div

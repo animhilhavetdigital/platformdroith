@@ -11,3 +11,8 @@ node_modules/
 *.err
 build-log.txt
 tsconfig.tsbuildinfo
+
+# PDF generation artifacts
+.venv-pdf/
+generate_analysis_pdf.py
+analyse-droithabitat.pdf

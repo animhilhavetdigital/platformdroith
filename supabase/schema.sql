@@ -421,12 +421,13 @@ CREATE POLICY "mediation_admin_all"
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, role, nom, prenom)
+  INSERT INTO public.profiles (id, role, nom, prenom, telephone)
   VALUES (
     NEW.id,
     COALESCE((NEW.raw_user_meta_data->>'role')::user_role, 'client'),
     COALESCE(NEW.raw_user_meta_data->>'nom', ''),
-    COALESCE(NEW.raw_user_meta_data->>'prenom', '')
+    COALESCE(NEW.raw_user_meta_data->>'prenom', ''),
+    COALESCE(NEW.raw_user_meta_data->>'telephone', '')
   );
   RETURN NEW;
 END;

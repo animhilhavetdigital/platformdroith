@@ -12,26 +12,60 @@ import {
   Trash2,
 } from 'lucide-react';
 
-interface UsersContentProps {
-  data: any;
+interface User {
+  id: string;
+  nom?: string;
+  prenom?: string;
+  email?: string;
+  role?: string;
+  telephone?: string;
+  created_at?: string;
+  status?: string;
+  // preview fields
+  name?: string;
+  assigned?: number;
+  lastActive?: string;
 }
 
-export default function UsersContent({ data }: UsersContentProps) {
-  const allUsers = data?.users || [];
+interface UsersContentProps {
+  users: User[];
+  isPreview?: boolean;
+}
 
+export default function UsersContent({ users, isPreview = false }: UsersContentProps) {
   const [search, setSearch] = useState('');
-  const [roleFilter, setRoleFilter] = useState<'all' | 'Client' | 'Negociateur'>('all');
+  const [roleFilter, setRoleFilter] = useState<'all' | 'Client' | 'Negociateur' | 'Super admin'>('all');
   const [sortBy, setSortBy] = useState<'name' | 'role' | 'lastActive'>('name');
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [showFilters, setShowFilters] = useState(false);
 
+  const normalizedUsers = useMemo(() => {
+    return users.map((user) => ({
+      id: user.id,
+      name: isPreview
+        ? user.name || `${user.prenom} ${user.nom}`
+        : `${user.prenom || ''} ${user.nom || ''}`.trim() || '—',
+      email: user.email || '—',
+      role: isPreview
+        ? user.role || 'Client'
+        : user.role === 'super_admin'
+          ? 'Super admin'
+          : user.role === 'negotiator'
+            ? 'Negociateur'
+            : 'Client',
+      status: user.status || 'Actif',
+      assigned: user.assigned ?? 0,
+      lastActive: user.lastActive || (user.created_at ? new Date(user.created_at).toLocaleDateString('fr-FR') : '—'),
+    }));
+  }, [users, isPreview]);
+
   const filteredUsers = useMemo(() => {
-    let result = [...allUsers];
+    let result = [...normalizedUsers];
 
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter(
-        (user: any) =>
+        (user) =>
           user.name.toLowerCase().includes(q) ||
           user.email.toLowerCase().includes(q) ||
           user.role.toLowerCase().includes(q)
@@ -39,17 +73,17 @@ export default function UsersContent({ data }: UsersContentProps) {
     }
 
     if (roleFilter !== 'all') {
-      result = result.filter((user: any) => user.role === roleFilter);
+      result = result.filter((user) => user.role === roleFilter);
     }
 
-    result.sort((a: any, b: any) => {
+    result.sort((a, b) => {
       if (sortBy === 'name') return a.name.localeCompare(b.name);
       if (sortBy === 'role') return a.role.localeCompare(b.role);
       return a.lastActive.localeCompare(b.lastActive);
     });
 
     return result;
-  }, [allUsers, search, roleFilter, sortBy]);
+  }, [normalizedUsers, search, roleFilter, sortBy]);
 
   const toggleSelect = (id: string) => {
     const next = new Set(selected);
@@ -62,7 +96,7 @@ export default function UsersContent({ data }: UsersContentProps) {
     if (selected.size === filteredUsers.length) {
       setSelected(new Set());
     } else {
-      setSelected(new Set(filteredUsers.map((u: any) => u.id)));
+      setSelected(new Set(filteredUsers.map((u) => u.id)));
     }
   };
 
@@ -71,11 +105,11 @@ export default function UsersContent({ data }: UsersContentProps) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Utilisateurs</h1>
-          <p className="text-sm text-gray-500">Gestion des clients et negociateurs</p>
+          <p className="text-sm text-gray-500">Gestion des clients et négociateurs</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <button
-            onClick={() => alert('Ajouter un utilisateur (demo)')}
+            onClick={() => alert('Création de compte disponible via le paiement client ou en base de données (mode admin).')}
             className="flex h-9 items-center gap-1.5 rounded-xl bg-primary-600 px-3 text-xs font-bold text-white shadow-sm transition-colors hover:bg-primary-700"
           >
             <Plus size={16} />
@@ -123,8 +157,8 @@ export default function UsersContent({ data }: UsersContentProps) {
 
       {showFilters && (
         <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-          <span className="text-xs font-bold text-gray-400">Role :</span>
-          {(['all', 'Client', 'Negociateur'] as const).map((role) => (
+          <span className="text-xs font-bold text-gray-400">Rôle :</span>
+          {(['all', 'Client', 'Negociateur', 'Super admin'] as const).map((role) => (
             <button
               key={role}
               onClick={() => setRoleFilter(role)}
@@ -156,9 +190,8 @@ export default function UsersContent({ data }: UsersContentProps) {
                   {selected.size === filteredUsers.length && filteredUsers.length > 0 && <SquareCheck size={10} />}
                 </button>
               </th>
-              <th className="px-4 py-4 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">ID</th>
               <th className="px-4 py-4 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Utilisateur</th>
-              <th className="px-4 py-4 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Role</th>
+              <th className="px-4 py-4 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Rôle</th>
               <th className="px-4 py-4 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Email</th>
               <th className="px-4 py-4 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Dossiers</th>
               <th className="px-4 py-4 text-left text-[10px] font-bold uppercase tracking-wider text-gray-400">Statut</th>
@@ -167,7 +200,7 @@ export default function UsersContent({ data }: UsersContentProps) {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {filteredUsers.map((user: any) => {
+            {filteredUsers.map((user) => {
               const initials = user.name
                 .split(' ')
                 .map((n: string) => n[0])
@@ -186,15 +219,14 @@ export default function UsersContent({ data }: UsersContentProps) {
                       {isSelected && <SquareCheck size={10} />}
                     </button>
                   </td>
-                  <td className="px-4 py-4 font-mono text-xs font-bold text-gray-700">{user.id}</td>
                   <td className="px-4 py-4">
                     <div className="flex items-center gap-3">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-50 text-xs font-bold text-primary-600 shadow-sm">
-                        {initials}
+                        {initials || '—'}
                       </div>
                       <div>
                         <p className="text-sm font-bold text-gray-900">{user.name}</p>
-                        <p className="text-xs text-gray-400">{user.email}</p>
+                        <p className="text-xs text-gray-400">{user.id.slice(0, 8)}...</p>
                       </div>
                     </div>
                   </td>
@@ -217,7 +249,7 @@ export default function UsersContent({ data }: UsersContentProps) {
                   </td>
                   <td className="px-4 py-4">
                     <button
-                      onClick={() => alert(`Actions pour ${user.name} (demo)`)}
+                      onClick={() => alert(`Actions pour ${user.name}`)}
                       className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
                     >
                       <MoreHorizontal size={18} />
@@ -228,8 +260,8 @@ export default function UsersContent({ data }: UsersContentProps) {
             })}
             {filteredUsers.length === 0 && (
               <tr>
-                <td colSpan={9} className="px-4 py-12 text-center text-sm text-gray-500">
-                  Aucun utilisateur trouve.
+                <td colSpan={8} className="px-4 py-12 text-center text-sm text-gray-500">
+                  Aucun utilisateur trouvé.
                 </td>
               </tr>
             )}

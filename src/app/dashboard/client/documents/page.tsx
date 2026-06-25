@@ -88,7 +88,7 @@ export default async function ClientDocumentsPage({ searchParams }: Props) {
               Zone d&apos;upload desactivee en demo locale. Les documents ci-dessous sont des donnees fictives prevues pour la visualisation du parcours.
             </div>
           ) : dossier ? (
-            <UploadForm dossierId={dossier.id} />
+            <UploadForm dossierId={dossier.id} formulaireData={dossier.formulaire_data} />
           ) : (
             <p className="text-gray-500">Aucun dossier trouve.</p>
           )}
