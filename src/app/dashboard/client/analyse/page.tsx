@@ -126,7 +126,7 @@ export default async function ClientAnalysePage({ searchParams }: Props) {
           {analysisReady && (
             <Link
               href="/dashboard/client/rapport"
-              className="mt-8 inline-flex items-center gap-2 rounded-xl bg-success-600 px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-success-600/20 transition-all hover:bg-success-700 hover:scale-[1.02]"
+              className="mt-8 inline-flex items-center gap-2 rounded-xl bg-primary-600 px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-colors"
             >
               Voir mon rapport
               <ArrowRight size={18} />
