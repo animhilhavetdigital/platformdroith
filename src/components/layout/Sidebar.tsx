@@ -6,17 +6,25 @@ import { cn } from '@/lib/utils';
 import {
   LayoutDashboard,
   FolderOpen,
+  ClipboardList,
+  UploadCloud,
+  Brain,
   FileText,
-  Users,
+  Handshake,
+  MessageCircle,
   Settings,
-  MessageSquare,
-  BarChart3,
-  Shield,
-  LogOut,
-  Upload,
-  Clock,
-  Star,
+  FolderClock,
+  History,
+  CreditCard,
+  Users,
+  UserPlus,
+  FileCheck,
+  Receipt,
+  Mail,
+  UserCog,
   ChevronDown,
+  LogOut,
+  Shield,
 } from 'lucide-react';
 import { UserRole } from '@/types';
 
@@ -34,37 +42,47 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   // Super Admin
-  { label: 'Tableau de bord', href: '/dashboard/admin', icon: <LayoutDashboard size={18} />, roles: ['super_admin'] },
-  { label: 'Tous les dossiers', href: '/dashboard/admin/dossiers', icon: <FolderOpen size={18} />, roles: ['super_admin'] },
-  { label: 'Utilisateurs', href: '/dashboard/admin/users', icon: <Users size={18} />, roles: ['super_admin'] },
-  { label: 'Statistiques', href: '/dashboard/admin/stats', icon: <BarChart3 size={18} />, roles: ['super_admin'] },
-  { label: 'Paramètres', href: '/dashboard/admin/settings', icon: <Settings size={18} />, roles: ['super_admin'] },
+  { label: 'Tableau de bord', href: '/dashboard/super-admin', icon: <LayoutDashboard size={18} />, roles: ['super_admin'] },
+  { label: 'Clients payés', href: '/dashboard/super-admin/clients-payes', icon: <CreditCard size={18} />, roles: ['super_admin'] },
+  { label: 'Clients', href: '/dashboard/super-admin/clients', icon: <Users size={18} />, roles: ['super_admin'] },
+  { label: 'Créer un client', href: '/dashboard/super-admin/clients/nouveau', icon: <UserPlus size={18} />, roles: ['super_admin'] },
+  { label: 'Dossiers', href: '/dashboard/super-admin/dossiers', icon: <FolderOpen size={18} />, roles: ['super_admin'] },
+  { label: 'Rapports IA', href: '/dashboard/super-admin/rapports', icon: <FileText size={18} />, roles: ['super_admin'] },
+  { label: 'Négociateurs', href: '/dashboard/super-admin/negociateurs', icon: <Handshake size={18} />, roles: ['super_admin'] },
+  { label: 'Dossiers négociation', href: '/dashboard/super-admin/negociations', icon: <FileCheck size={18} />, roles: ['super_admin'] },
+  { label: 'Paiements', href: '/dashboard/super-admin/paiements', icon: <Receipt size={18} />, roles: ['super_admin'] },
+  { label: 'Emails envoyés', href: '/dashboard/super-admin/emails', icon: <Mail size={18} />, roles: ['super_admin'] },
+  { label: 'Utilisateurs', href: '/dashboard/super-admin/utilisateurs', icon: <UserCog size={18} />, roles: ['super_admin'] },
+  { label: 'Paramètres', href: '/dashboard/super-admin/parametres', icon: <Settings size={18} />, roles: ['super_admin'] },
 
   // Négociateur
-  { label: 'Mes dossiers', href: '/dashboard/negotiator', icon: <FolderOpen size={18} />, roles: ['negotiator'] },
-  { label: 'Médiations', href: '/dashboard/negotiator/mediations', icon: <MessageSquare size={18} />, roles: ['negotiator'] },
-  { label: 'Rapports', href: '/dashboard/negotiator/rapports', icon: <FileText size={18} />, roles: ['negotiator'] },
+  { label: 'Tableau de bord', href: '/dashboard/negociateur', icon: <LayoutDashboard size={18} />, roles: ['negotiator'] },
+  { label: 'Dossiers à traiter', href: '/dashboard/negociateur/dossiers', icon: <FolderClock size={18} />, roles: ['negotiator'] },
+  { label: 'Historique', href: '/dashboard/negociateur/historique', icon: <History size={18} />, roles: ['negotiator'] },
+  { label: 'Messages', href: '/dashboard/negociateur/messages', icon: <MessageCircle size={18} />, roles: ['negotiator'] },
+  { label: 'Paramètres', href: '/dashboard/negociateur/parametres', icon: <Settings size={18} />, roles: ['negotiator'] },
 
   // Client
-  { label: 'Mon dossier', href: '/dashboard/client', icon: <FolderOpen size={18} />, roles: ['client'] },
-  { label: 'Formulaire', href: '/dashboard/client/formulaire', icon: <FileText size={18} />, roles: ['client'] },
-  { label: 'Mes documents', href: '/dashboard/client/documents', icon: <Upload size={18} />, roles: ['client'] },
-  { label: 'Analyse', href: '/dashboard/client/analyse', icon: <Clock size={18} />, roles: ['client'] },
-  { label: 'Mon rapport', href: '/dashboard/client/rapport', icon: <Shield size={18} />, roles: ['client'] },
-  { label: 'Orientation', href: '/dashboard/client/orientation', icon: <BarChart3 size={18} />, roles: ['client'] },
-  { label: 'Feedback', href: '/dashboard/client/feedback', icon: <Star size={18} />, roles: ['client'] },
-  { label: 'Contact', href: '/dashboard/client/contact', icon: <MessageSquare size={18} />, roles: ['client'] },
+  { label: 'Tableau de bord', href: '/dashboard/client', icon: <LayoutDashboard size={18} />, roles: ['client'] },
+  { label: 'Mon dossier', href: '/dashboard/client/dossier', icon: <FolderOpen size={18} />, roles: ['client'] },
+  { label: 'Formulaire', href: '/dashboard/client/formulaire', icon: <ClipboardList size={18} />, roles: ['client'] },
+  { label: 'Documents', href: '/dashboard/client/documents', icon: <UploadCloud size={18} />, roles: ['client'] },
+  { label: 'Analyse en cours', href: '/dashboard/client/analyse', icon: <Brain size={18} />, roles: ['client'] },
+  { label: 'Mon rapport', href: '/dashboard/client/rapport', icon: <FileText size={18} />, roles: ['client'] },
+  { label: 'Négociateur', href: '/dashboard/client/negociateur', icon: <Handshake size={18} />, roles: ['client'] },
+  { label: 'Messages / Suivi', href: '/dashboard/client/suivi', icon: <MessageCircle size={18} />, roles: ['client'] },
+  { label: 'Paramètres', href: '/dashboard/client/parametres', icon: <Settings size={18} />, roles: ['client'] },
 ];
 
 const roleLabels: Record<UserRole, string> = {
   super_admin: 'Super admin',
-  negotiator: 'Negociateur',
+  negotiator: 'Négociateur',
   client: 'Client',
 };
 
 const roleDashboardPaths: Record<UserRole, string> = {
-  super_admin: '/dashboard/admin',
-  negotiator: '/dashboard/negotiator',
+  super_admin: '/dashboard/super-admin',
+  negotiator: '/dashboard/negociateur',
   client: '/dashboard/client',
 };
 

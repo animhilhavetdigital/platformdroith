@@ -5,7 +5,9 @@ import { UserRole } from './types';
 
 // Routes protégées par rôle
 const ROLE_ROUTES: Record<string, UserRole[]> = {
+  '/dashboard/super-admin': ['super_admin'],
   '/dashboard/admin': ['super_admin'],
+  '/dashboard/negociateur': ['super_admin', 'negotiator'],
   '/dashboard/negotiator': ['super_admin', 'negotiator'],
   '/dashboard/client': ['super_admin', 'client', 'negotiator'],
 };
@@ -63,9 +65,9 @@ export async function middleware(request: NextRequest) {
 function getDefaultDashboard(role: UserRole): string {
   switch (role) {
     case 'super_admin':
-      return '/dashboard/admin';
+      return '/dashboard/super-admin';
     case 'negotiator':
-      return '/dashboard/negotiator';
+      return '/dashboard/negociateur';
     case 'client':
       return '/dashboard/client';
     default:

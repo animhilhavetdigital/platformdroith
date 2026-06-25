@@ -141,11 +141,11 @@ export function getPreviewRole(allowedRoles: UserRole[]): UserRole {
 }
 
 export function getPreviewRoleFromPath(pathname: string): UserRole {
-  if (pathname.startsWith('/dashboard/admin')) {
+  if (pathname.startsWith('/dashboard/super-admin') || pathname.startsWith('/dashboard/admin')) {
     return 'super_admin';
   }
 
-  if (pathname.startsWith('/dashboard/negotiator')) {
+  if (pathname.startsWith('/dashboard/negociateur') || pathname.startsWith('/dashboard/negotiator')) {
     return 'negotiator';
   }
 
