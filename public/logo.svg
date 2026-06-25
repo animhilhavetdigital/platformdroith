@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 70" fill="none">
+  <!-- Toit -->
+  <path d="M20 35 L35 18 L50 35" fill="#10b981" stroke="#10b981" stroke-width="3" stroke-linejoin="round"/>
+  <!-- Murs -->
+  <rect x="23" y="35" width="24" height="20" fill="#10b981" stroke="#10b981" stroke-width="2"/>
+  <!-- Porte -->
+  <rect x="30" y="42" width="10" height="13" fill="white"/>
+  <!-- Colonne gauche -->
+  <rect x="12" y="38" width="6" height="17" rx="3" fill="#047857"/>
+  <!-- Colonne droite -->
+  <rect x="52" y="38" width="6" height="17" rx="3" fill="#047857"/>
+  
+  <!-- Texte DroitHabitat -->
+  <text x="72" y="32" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#0f172a">DroitHabitat</text>
+  <!-- Texte Expertise -->
+  <text x="72" y="54" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="500" fill="#10b981">Expertise</text>
+</svg>

@@ -1,0 +1,13 @@
+node_modules/
+.next/
+.tools/
+.tmp-chrome-profile/
+.tmp-drive-share/
+.tmp-playwright/
+
+.env.local
+
+*.log
+*.err
+build-log.txt
+tsconfig.tsbuildinfo
