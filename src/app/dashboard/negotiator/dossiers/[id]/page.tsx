@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, User, Phone, Mail, Calendar, XCircle, CheckCircle } from 'lucide-react';
+import { ArrowLeft, User, Phone, Mail, Calendar, XCircle, CheckCircle, FileText } from 'lucide-react';
 import PreviewScenarioNav from '@/components/client/PreviewScenarioNav';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import {
@@ -112,6 +112,13 @@ export default async function NegotiatorDossierDetail({ params, searchParams }: 
           </div>
           {dossier.statut === 'mediation_en_cours' && (
             <div className="flex items-center gap-3">
+              <Link
+                href={isPreview ? buildPreviewHref(`/dashboard/negotiator/rapport/${params.id}`, previewScenario) : `/dashboard/negociateur/rapport/${params.id}`}
+                className="flex items-center gap-2 rounded-xl bg-primary-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary-600/20"
+              >
+                <FileText size={16} />
+                Ajouter rapport document
+              </Link>
               <form
                 action={async () => {
                   'use server';
@@ -120,7 +127,7 @@ export default async function NegotiatorDossierDetail({ params, searchParams }: 
               >
                 <button
                   type="submit"
-                  className="flex items-center gap-2 rounded-xl bg-success-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-success-600/20 transition-all hover:scale-[1.02] hover:bg-success-700"
+                  className="flex items-center gap-2 rounded-xl bg-success-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-success-600/20"
                 >
                   <CheckCircle size={16} />
                   Accord positif
@@ -134,7 +141,7 @@ export default async function NegotiatorDossierDetail({ params, searchParams }: 
               >
                 <button
                   type="submit"
-                  className="flex items-center gap-2 rounded-xl bg-danger-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-danger-600/20 transition-all hover:scale-[1.02] hover:bg-danger-700"
+                  className="flex items-center gap-2 rounded-xl bg-danger-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-danger-600/20"
                 >
                   <XCircle size={16} />
                   Négatif — Relais avocat
