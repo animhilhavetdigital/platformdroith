@@ -14,16 +14,18 @@ const previewLinks = [
 export default async function LoginPage() {
   const isDemoMode = isDevAccessEnabled();
 
-  const supabase = createServerSupabaseClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  if (!isDemoMode) {
+    const supabase = createServerSupabaseClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
-  if (session && !isDemoMode) {
-    const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
-    if (profile?.role === 'super_admin') redirect('/dashboard/admin');
-    if (profile?.role === 'negotiator') redirect('/dashboard/negotiator');
-    redirect('/dashboard/client');
+    if (session) {
+      const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
+      if (profile?.role === 'super_admin') redirect('/dashboard/admin');
+      if (profile?.role === 'negotiator') redirect('/dashboard/negotiator');
+      redirect('/dashboard/client');
+    }
   }
 
   async function handleLogin(formData: FormData) {

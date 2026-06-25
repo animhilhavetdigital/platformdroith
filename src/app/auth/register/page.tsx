@@ -2,8 +2,13 @@ import Link from 'next/link';
 import { createServerSupabaseClient } from '@/lib/supabase';
 import { redirect } from 'next/navigation';
 import { Shield, ArrowRight, User, Mail, Phone, Lock } from 'lucide-react';
+import { isDevAccessEnabled } from '@/lib/dev-access';
 
 export default async function RegisterPage() {
+  if (isDevAccessEnabled()) {
+    redirect('/auth/login');
+  }
+
   const supabase = createServerSupabaseClient();
   const {
     data: { session },

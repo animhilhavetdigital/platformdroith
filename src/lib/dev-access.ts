@@ -129,7 +129,11 @@ const BASE_DOCUMENTS: Array<Omit<Document, 'id' | 'dossier_id'>> = [
 ];
 
 export function isDevAccessEnabled() {
-  return process.env.DEV_FORCE_ACCESS === 'true';
+  return (
+    process.env.DEV_FORCE_ACCESS === 'true' ||
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL.includes('your-project')
+  );
 }
 
 export function getPreviewRole(allowedRoles: UserRole[]): UserRole {
