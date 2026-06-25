@@ -1,9 +1,23 @@
 'use server';
 
+import { isDevAccessEnabled } from '@/lib/dev-access';
+import { devStore } from '@/lib/dev-store';
 import { createServerSupabaseClient } from '@/lib/supabase';
 import { revalidatePath } from 'next/cache';
 
 export async function saveFormulaire(dossierId: string, data: Record<string, unknown>) {
+  if (isDevAccessEnabled()) {
+    const match = devStore.dossiers.find(d => d.id === dossierId);
+    if (match) {
+      match.formulaire_data = data;
+      match.date_formulaire_complete = new Date().toISOString();
+      match.statut = 'pieces_attendues';
+    }
+    revalidatePath('/dashboard/client');
+    revalidatePath('/dashboard/client/formulaire');
+    return { ok: true };
+  }
+
   const supabase = createServerSupabaseClient();
 
   const { error } = await supabase
@@ -22,5 +36,19 @@ export async function saveFormulaire(dossierId: string, data: Record<string, unk
 
   revalidatePath('/dashboard/client');
   revalidatePath('/dashboard/client/formulaire');
+  return { ok: true };
+}
+
+export async function resetFormulaire(dossierId: string) {
+  if (isDevAccessEnabled()) {
+    const match = devStore.dossiers.find(d => d.id === dossierId);
+    if (match) {
+      match.formulaire_data = {};
+      match.date_formulaire_complete = null;
+      match.statut = 'nouveau';
+    }
+    revalidatePath('/dashboard/client');
+    revalidatePath('/dashboard/client/formulaire');
+  }
   return { ok: true };
 }

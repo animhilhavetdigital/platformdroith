@@ -83,12 +83,15 @@ export default async function ClientDocumentsPage({ searchParams }: Props) {
             <h2 className="text-lg font-bold text-gray-900">Ajouter un document</h2>
           </div>
 
-          {isPreview ? (
-            <div className="rounded-xl border border-dashed border-sky-200 bg-sky-50 p-5 text-sm text-sky-900">
-              Zone d&apos;upload desactivee en demo locale. Les documents ci-dessous sont des donnees fictives prevues pour la visualisation du parcours.
-            </div>
-          ) : dossier ? (
-            <UploadForm dossierId={dossier.id} formulaireData={dossier.formulaire_data} />
+          {dossier ? (
+            <>
+              {isPreview && (
+                <div className="mb-4 rounded-xl border border-sky-100 bg-sky-50 p-4 text-sm text-sky-900">
+                  <strong>Mode Démo :</strong> Vous pouvez déposer un ou plusieurs fichiers factices pour simuler l&apos;envoi de pièces justificatives.
+                </div>
+              )}
+              <UploadForm dossierId={dossier.id} formulaireData={dossier.formulaire_data} />
+            </>
           ) : (
             <p className="text-gray-500">Aucun dossier trouve.</p>
           )}
@@ -138,26 +141,20 @@ export default async function ClientDocumentsPage({ searchParams }: Props) {
                     </div>
                   </div>
 
-                  {isPreview ? (
-                    <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-gray-400">
-                      Demo
-                    </span>
-                  ) : (
-                    <form
-                      action={async () => {
-                        'use server';
-                        await deleteDocument(doc.id, doc.storage_path);
-                      }}
+                  <form
+                    action={async () => {
+                      'use server';
+                      await deleteDocument(doc.id, doc.storage_path);
+                    }}
+                  >
+                    <button
+                      type="submit"
+                      className="rounded-xl p-2.5 text-gray-300 transition-colors hover:bg-danger-50 hover:text-danger-600"
+                      title="Supprimer"
                     >
-                      <button
-                        type="submit"
-                        className="rounded-xl p-2.5 text-gray-300 transition-colors hover:bg-danger-50 hover:text-danger-600"
-                        title="Supprimer"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </form>
-                  )}
+                      <Trash2 size={16} />
+                    </button>
+                  </form>
                 </div>
               ))}
             </div>

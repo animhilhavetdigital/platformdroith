@@ -1,4 +1,5 @@
 import { Dossier, Document, MediationEtape, Profile, UserRole } from '@/types';
+import { devStore } from '@/lib/dev-store';
 
 type PreviewProfile = Profile & {
   email?: string;
@@ -296,157 +297,156 @@ export function getPreviewClientData(
   scenario: PreviewClientScenario = DEFAULT_PREVIEW_CLIENT_SCENARIO
 ) {
   const client = getPreviewProfile('client');
+  const targetId = scenario === 'mediation' ? 'dos-client-1' : `dos-client-${scenario === 'documents' ? 'docs' : scenario}`;
 
+  const existing = devStore.dossiers.find((d) => d.id === targetId);
+  if (existing) {
+    return { dossier: existing };
+  }
+
+  let dossier: Dossier;
   switch (scenario) {
     case 'new':
-      return {
-        dossier: buildPreviewDossier({
-          id: 'dos-client-new',
-          reference: 'DH-2026-CL-099',
-          statut: 'nouveau',
-          offre: '2',
-          client,
-          date_creation: daysAgo(1),
-        }),
-      };
+      dossier = buildPreviewDossier({
+        id: 'dos-client-new',
+        reference: 'DH-2026-CL-099',
+        statut: 'nouveau',
+        offre: '2',
+        client,
+        date_creation: daysAgo(1),
+      });
+      break;
 
     case 'form':
-      return {
-        dossier: buildPreviewDossier({
-          id: 'dos-client-form',
-          reference: 'DH-2026-CL-078',
-          statut: 'formulaire_en_cours',
-          offre: '2',
-          client,
-          date_creation: daysAgo(3),
-          formulaire_data: DEMO_FORM_DRAFT,
-        }),
-      };
+      dossier = buildPreviewDossier({
+        id: 'dos-client-form',
+        reference: 'DH-2026-CL-078',
+        statut: 'formulaire_en_cours',
+        offre: '2',
+        client,
+        date_creation: daysAgo(3),
+        formulaire_data: DEMO_FORM_DRAFT,
+      });
+      break;
 
     case 'documents':
-      return {
-        dossier: buildPreviewDossier({
-          id: 'dos-client-docs',
-          reference: 'DH-2026-CL-051',
-          statut: 'pieces_attendues',
-          offre: '2',
-          client,
-          date_creation: daysAgo(8),
-          date_formulaire_complete: daysAgo(7),
-          formulaire_data: DEMO_FORM_DATA,
-        }),
-      };
+      dossier = buildPreviewDossier({
+        id: 'dos-client-docs',
+        reference: 'DH-2026-CL-051',
+        statut: 'pieces_attendues',
+        offre: '2',
+        client,
+        date_creation: daysAgo(8),
+        date_formulaire_complete: daysAgo(7),
+        formulaire_data: DEMO_FORM_DATA,
+      });
+      break;
 
     case 'analysis':
-      return {
-        dossier: buildPreviewDossier({
-          id: 'dos-client-analysis',
-          reference: 'DH-2026-CL-032',
-          statut: 'analyse_en_cours',
-          offre: '2',
-          client,
-          date_creation: daysAgo(10),
-          date_formulaire_complete: daysAgo(9),
-          date_upload_complete: daysAgo(6),
-          date_analyse_debut: daysAgo(2),
-          formulaire_data: DEMO_FORM_DATA,
-          documents: cloneDocumentsForDossier('dos-client-analysis'),
-        }),
-      };
+      dossier = buildPreviewDossier({
+        id: 'dos-client-analysis',
+        reference: 'DH-2026-CL-032',
+        statut: 'analyse_en_cours',
+        offre: '2',
+        client,
+        date_creation: daysAgo(10),
+        date_formulaire_complete: daysAgo(9),
+        date_upload_complete: daysAgo(6),
+        date_analyse_debut: daysAgo(2),
+        formulaire_data: DEMO_FORM_DATA,
+        documents: cloneDocumentsForDossier('dos-client-analysis'),
+      });
+      break;
 
     case 'report':
-      return {
-        dossier: buildPreviewDossier({
-          id: 'dos-client-report',
-          reference: 'DH-2026-CL-021',
-          statut: 'livre',
-          offre: '2',
-          client,
-          negotiator_id: 'preview-negotiator',
-          date_creation: daysAgo(12),
-          date_formulaire_complete: daysAgo(11),
-          date_upload_complete: daysAgo(8),
-          date_analyse_debut: daysAgo(6),
-          date_livraison: daysAgo(1),
-          formulaire_data: DEMO_FORM_DATA,
-          documents: cloneDocumentsForDossier('dos-client-report'),
-          rapport_url: '/demo/rapport.pdf',
-          rapport_data: DEMO_REPORT_DATA,
-          scoring_verdict: 'OUI',
-          scoring_confiance: 8,
-        }),
-      };
+      dossier = buildPreviewDossier({
+        id: 'dos-client-report',
+        reference: 'DH-2026-CL-021',
+        statut: 'livre',
+        offre: '2',
+        client,
+        negotiator_id: 'preview-negotiator',
+        date_creation: daysAgo(12),
+        date_formulaire_complete: daysAgo(11),
+        date_upload_complete: daysAgo(8),
+        date_analyse_debut: daysAgo(6),
+        date_livraison: daysAgo(1),
+        formulaire_data: DEMO_FORM_DATA,
+        documents: cloneDocumentsForDossier('dos-client-report'),
+        rapport_url: '/demo/rapport.pdf',
+        rapport_data: DEMO_REPORT_DATA,
+        scoring_verdict: 'OUI',
+        scoring_confiance: 8,
+      });
+      break;
 
     case 'orientation':
-      return {
-        dossier: buildPreviewDossier({
-          id: 'dos-client-orientation',
-          reference: 'DH-2026-CL-019',
-          statut: 'orientation_en_cours',
-          offre: '2',
-          client,
-          negotiator_id: 'preview-negotiator',
-          date_creation: daysAgo(13),
-          date_formulaire_complete: daysAgo(12),
-          date_upload_complete: daysAgo(9),
-          date_analyse_debut: daysAgo(7),
-          date_livraison: daysAgo(2),
-          formulaire_data: DEMO_FORM_DATA,
-          documents: cloneDocumentsForDossier('dos-client-orientation'),
-          rapport_url: '/demo/rapport.pdf',
-          rapport_data: DEMO_REPORT_DATA,
-          scoring_verdict: 'OUI',
-          scoring_confiance: 8,
-        }),
-      };
+      dossier = buildPreviewDossier({
+        id: 'dos-client-orientation',
+        reference: 'DH-2026-CL-019',
+        statut: 'orientation_en_cours',
+        offre: '2',
+        client,
+        negotiator_id: 'preview-negotiator',
+        date_creation: daysAgo(13),
+        date_formulaire_complete: daysAgo(12),
+        date_upload_complete: daysAgo(9),
+        date_analyse_debut: daysAgo(7),
+        date_livraison: daysAgo(2),
+        formulaire_data: DEMO_FORM_DATA,
+        documents: cloneDocumentsForDossier('dos-client-orientation'),
+        rapport_url: '/demo/rapport.pdf',
+        rapport_data: DEMO_REPORT_DATA,
+        scoring_verdict: 'OUI',
+        scoring_confiance: 8,
+      });
+      break;
 
     case 'autonomy':
-      return {
-        dossier: buildPreviewDossier({
-          id: 'dos-client-autonomy',
-          reference: 'DH-2026-CL-017',
-          statut: 'autonomie',
-          offre: '1',
-          client,
-          date_creation: daysAgo(14),
-          date_formulaire_complete: daysAgo(13),
-          date_upload_complete: daysAgo(10),
-          date_analyse_debut: daysAgo(8),
-          date_livraison: daysAgo(3),
-          formulaire_data: DEMO_FORM_DATA,
-          documents: cloneDocumentsForDossier('dos-client-autonomy'),
-          rapport_url: '/demo/rapport.pdf',
-          rapport_data: DEMO_REPORT_DATA,
-          scoring_verdict: 'OUI',
-          scoring_confiance: 7,
-        }),
-      };
+      dossier = buildPreviewDossier({
+        id: 'dos-client-autonomy',
+        reference: 'DH-2026-CL-017',
+        statut: 'autonomie',
+        offre: '1',
+        client,
+        date_creation: daysAgo(14),
+        date_formulaire_complete: daysAgo(13),
+        date_upload_complete: daysAgo(10),
+        date_analyse_debut: daysAgo(8),
+        date_livraison: daysAgo(3),
+        formulaire_data: DEMO_FORM_DATA,
+        documents: cloneDocumentsForDossier('dos-client-autonomy'),
+        rapport_url: '/demo/rapport.pdf',
+        rapport_data: DEMO_REPORT_DATA,
+        scoring_verdict: 'OUI',
+        scoring_confiance: 7,
+      });
+      break;
 
     case 'avocat':
-      return {
-        dossier: buildPreviewDossier({
-          id: 'dos-client-avocat',
-          reference: 'DH-2026-CL-015',
-          statut: 'avocat',
-          offre: '3',
-          client,
-          negotiator_id: 'preview-negotiator',
-          date_creation: daysAgo(15),
-          date_formulaire_complete: daysAgo(14),
-          date_upload_complete: daysAgo(11),
-          date_analyse_debut: daysAgo(9),
-          date_livraison: daysAgo(4),
-          formulaire_data: DEMO_FORM_DATA,
-          documents: cloneDocumentsForDossier('dos-client-avocat'),
-          rapport_url: '/demo/rapport.pdf',
-          rapport_data: DEMO_REPORT_DATA,
-          scoring_verdict: 'OUI',
-          scoring_confiance: 9,
-        }),
-      };
+      dossier = buildPreviewDossier({
+        id: 'dos-client-avocat',
+        reference: 'DH-2026-CL-015',
+        statut: 'avocat',
+        offre: '3',
+        client,
+        negotiator_id: 'preview-negotiator',
+        date_creation: daysAgo(15),
+        date_formulaire_complete: daysAgo(14),
+        date_upload_complete: daysAgo(11),
+        date_analyse_debut: daysAgo(9),
+        date_livraison: daysAgo(4),
+        formulaire_data: DEMO_FORM_DATA,
+        documents: cloneDocumentsForDossier('dos-client-avocat'),
+        rapport_url: '/demo/rapport.pdf',
+        rapport_data: DEMO_REPORT_DATA,
+        scoring_verdict: 'OUI',
+        scoring_confiance: 9,
+      });
+      break;
 
-    case 'closed': {
-      const dossier = buildPreviewDossier({
+    case 'closed':
+      dossier = buildPreviewDossier({
         id: 'dos-client-closed',
         reference: 'DH-2026-CL-014',
         statut: 'cloture',
@@ -467,12 +467,11 @@ export function getPreviewClientData(
         scoring_confiance: 8,
       });
       dossier.mediation_etapes = buildPreviewMediationEtapes(dossier.id, 5);
-      return { dossier };
-    }
+      break;
 
     case 'mediation':
-    default: {
-      const dossier = buildPreviewDossier({
+    default:
+      dossier = buildPreviewDossier({
         id: 'dos-client-1',
         reference: 'DH-2026-CL-014',
         statut: 'mediation_en_cours',
@@ -492,9 +491,11 @@ export function getPreviewClientData(
         scoring_confiance: 8,
       });
       dossier.mediation_etapes = buildPreviewMediationEtapes(dossier.id, 2);
-      return { dossier };
-    }
+      break;
   }
+
+  devStore.dossiers.push(dossier);
+  return { dossier };
 }
 
 export function getPreviewNewClientData() {

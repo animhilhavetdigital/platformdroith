@@ -5,6 +5,8 @@ import { createBrowserSupabaseClient } from '@/lib/supabase-browser';
 import { useRouter } from 'next/navigation';
 import { confirmUploadComplete } from './actions';
 import { Upload, CheckCircle, File, X, Loader2, ClipboardList } from 'lucide-react';
+import { isDevAccessEnabled } from '@/lib/dev-access';
+import { devStore } from '@/lib/dev-store';
 
 const DOCUMENT_TYPES = [
   { value: 'contrat_credit', label: 'Contrat de crédit' },
@@ -63,6 +65,47 @@ export default function UploadForm({ dossierId, formulaireData }: UploadFormProp
     setError('');
     setSuccess(false);
     setProgress(0);
+
+    if (isDevAccessEnabled()) {
+      const total = files.length;
+      let done = 0;
+      
+      for (let i = 0; i < files.length; i++) {
+        for (let p = 0; p <= 100; p += 25) {
+          setProgress(Math.round(((done + p / 100) / total) * 100));
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+
+        const file = files[i];
+        const match = devStore.dossiers.find(d => d.id === dossierId);
+        if (match) {
+          if (!match.documents) {
+            match.documents = [];
+          }
+          match.documents.push({
+            id: `doc-demo-${Date.now()}-${i}`,
+            dossier_id: dossierId,
+            type: docType as any,
+            nom_fichier: file.name,
+            storage_path: `preview/${file.name}`,
+            ocr_text: null,
+            ocr_confidence: null,
+            taille_octets: file.size,
+            mime_type: file.type,
+            created_at: new Date().toISOString(),
+          });
+        }
+        done++;
+        setProgress(Math.round((done / total) * 100));
+      }
+
+      await confirmUploadComplete(dossierId);
+      setSuccess(true);
+      setFiles(null);
+      router.refresh();
+      setUploading(false);
+      return;
+    }
 
     const supabase = createBrowserSupabaseClient();
     const total = files.length;
