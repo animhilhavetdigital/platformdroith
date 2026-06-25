@@ -127,7 +127,7 @@ export default async function NegotiatorDossierDetail({ params, searchParams }: 
               >
                 <button
                   type="submit"
-                  className="flex items-center gap-2 rounded-xl bg-success-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-success-600/20"
+                  className="flex items-center gap-2 rounded-xl bg-green-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-green-600/20"
                 >
                   <CheckCircle size={16} />
                   Accord positif
@@ -141,7 +141,7 @@ export default async function NegotiatorDossierDetail({ params, searchParams }: 
               >
                 <button
                   type="submit"
-                  className="flex items-center gap-2 rounded-xl bg-danger-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-danger-600/20"
+                  className="flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-red-600/20"
                 >
                   <XCircle size={16} />
                   Négatif — Relais avocat
