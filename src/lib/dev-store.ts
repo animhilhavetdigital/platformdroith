@@ -160,7 +160,7 @@ if (!devStore.initialized) {
       date_livraison: daysAgo(2),
       rapport_url: '/demo/rapport.pdf',
       rapport_data: {
-        title: 'Memoire juridique d\'expertise',
+        title: 'Compte-rendu de médiation',
         verdict: 'Fort potentiel de contestation',
         summary: 'Le dossier presente plusieurs irregularites exploitables : demarchage contestable, information precontractuelle incomplete.',
         irregularities: [
@@ -309,7 +309,7 @@ if (!devStore.initialized) {
       date_cloture: daysAgo(2),
       rapport_url: '/demo/rapport-final.pdf',
       rapport_data: {
-        title: 'Mémoire de médiation Cetelem',
+        title: 'Compte-rendu de médiation Cetelem',
         verdict: 'Accord amiable conclu',
         summary: 'Médiation résolue avec remboursement partiel de la prime d assurance.',
         irregularities: [

@@ -115,13 +115,18 @@ export default async function ClientRapportPage({ searchParams }: Props) {
           ) : (
             <div className="grid gap-6 md:grid-cols-2">
               {dossiersAvecRapport.map((d) => {
-                const reportTitle = d.rapport_data?.title || 'Mémoire juridique de contestation';
+                const isMediationReport = !!d.negotiator_id;
+                const reportTitle = d.rapport_data?.title 
+                  ? (isMediationReport && (d.rapport_data.title.toLowerCase().includes('mémoire') || d.rapport_data.title.toLowerCase().includes('memoire'))
+                      ? 'Compte-rendu de médiation' 
+                      : d.rapport_data.title)
+                  : (isMediationReport ? 'Compte-rendu de médiation' : 'Mémoire juridique de contestation');
+
                 const createdDate = new Date(d.date_creation).toLocaleDateString('fr-FR', {
                   day: 'numeric',
                   month: 'short',
                   year: 'numeric',
                 });
-                const isMediationReport = !!d.negotiator_id;
 
                 return (
                   <div 
@@ -153,7 +158,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
                       <div>
                         <h3 className="text-base font-bold text-gray-900 line-clamp-1">{reportTitle}</h3>
                         <p className="text-xs text-gray-500 mt-1 leading-relaxed line-clamp-2">
-                          {d.rapport_data?.summary || 'Consultez les conclusions détaillées de ce mémoire juridique.'}
+                          {d.rapport_data?.summary || (isMediationReport ? 'Consultez les conclusions de votre compte-rendu de médiation.' : 'Consultez les conclusions détaillées de ce mémoire juridique.')}
                         </p>
                       </div>
 
@@ -241,7 +246,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
           </h1>
           <p className="mt-2 text-gray-500">
             {isMediationReport
-              ? 'Consultez le compte-rendu de médiation et suivez l\'état d\'avancement pour ce dossier'
+              ? 'Consultez le compte-rendu de la médiation menée par votre négociateur'
               : 'Consultez le mémoire juridique et choisissez la suite à donner pour ce dossier'}
           </p>
         </div>
@@ -264,10 +269,14 @@ export default async function ClientRapportPage({ searchParams }: Props) {
                 <div>
                   <div className="inline-flex items-center gap-2 rounded-full bg-success-50 px-4 py-2 text-xs font-bold uppercase tracking-wider text-success-700 font-sans">
                     <Shield size={14} />
-                    {isMediationReport ? 'Compte-rendu disponible' : 'Rapport IA disponible'}
+                    {isMediationReport ? 'Rapport de médiation disponible' : 'Rapport IA disponible'}
                   </div>
                   <h2 className="mt-4 text-2xl font-bold text-gray-900 font-sans">
-                    {(reportData.title as string) || 'Mémoire juridique de contestation'}
+                    {isMediationReport
+                      ? (reportData.title && (String(reportData.title).toLowerCase().includes('mémoire') || String(reportData.title).toLowerCase().includes('memoire'))
+                          ? 'Compte-rendu de médiation'
+                          : (reportData.title as string) || 'Compte-rendu de médiation')
+                      : (reportData.title as string) || 'Mémoire juridique de contestation'}
                   </h2>
                   <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-600 font-sans">
                     {(reportData.summary as string) || 'Le dossier est consolidé.'}
