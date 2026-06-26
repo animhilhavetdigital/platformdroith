@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -54,10 +55,7 @@ const navItems: NavItem[] = [
   // Client
   { label: 'Tableau de bord', href: '/dashboard/client', icon: <LayoutDashboard size={18} />, roles: ['client'] },
   { label: 'Mon dossier', href: '/dashboard/client/dossier', icon: <FolderOpen size={18} />, roles: ['client'] },
-  { label: 'Formulaire', href: '/dashboard/client/formulaire', icon: <ClipboardList size={18} />, roles: ['client'] },
-  { label: 'Analyse en cours', href: '/dashboard/client/analyse', icon: <Brain size={18} />, roles: ['client'] },
   { label: 'Mon rapport', href: '/dashboard/client/rapport', icon: <FileText size={18} />, roles: ['client'] },
-  { label: 'Négociateur', href: '/dashboard/client/negociateur', icon: <Handshake size={18} />, roles: ['client'] },
   { label: 'Messages / Suivi', href: '/dashboard/client/suivi', icon: <MessageCircle size={18} />, roles: ['client'] },
   { label: 'Paramètres', href: '/dashboard/client/parametres', icon: <Settings size={18} />, roles: ['client'] },
 ];
@@ -82,6 +80,24 @@ export default function Sidebar({ role, canSwitchRoles = false }: SidebarProps) 
   const searchParams = useSearchParams();
   const filteredItems = navItems.filter((item) => item.roles.includes(role));
   const scenario = searchParams.get('scenario');
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const handleToggle = () => setIsOpen((prev) => !prev);
+    const handleClose = () => setIsOpen(false);
+
+    window.addEventListener('toggle-sidebar', handleToggle);
+    window.addEventListener('close-sidebar', handleClose);
+
+    return () => {
+      window.removeEventListener('toggle-sidebar', handleToggle);
+      window.removeEventListener('close-sidebar', handleClose);
+    };
+  }, []);
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   const withScenario = (href: string) => {
     if (!scenario || !href.startsWith('/dashboard')) {
@@ -104,7 +120,21 @@ export default function Sidebar({ role, canSwitchRoles = false }: SidebarProps) 
   };
 
   return (
-    <aside className="w-66 min-h-screen bg-white border-r border-slate-100 flex flex-col px-4 py-6">
+    <>
+      {/* Backdrop for mobile/tablet */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm lg:hidden transition-opacity"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 w-66 bg-white border-r border-slate-100 flex flex-col px-4 py-6 transition-transform duration-300 lg:static lg:translate-x-0 lg:z-auto lg:min-h-screen lg:flex",
+          isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        )}
+      >
       {/* Header */}
       <div className="px-4 mb-6">
         <div className="flex justify-center mb-2">
@@ -210,5 +240,6 @@ export default function Sidebar({ role, canSwitchRoles = false }: SidebarProps) 
         </form>
       </div>
     </aside>
+    </>
   );
 }

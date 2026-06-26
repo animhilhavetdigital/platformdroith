@@ -248,7 +248,14 @@ export default function FormulaireForm({ dossierId, initialData = {} }: { dossie
 
     setUploading(false);
     setLoading(false);
-    router.push('/dashboard/client/analyse?submitted=1');
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const scenario = searchParams.get('scenario');
+    let nextPath = `/dashboard/client/analyse?id=${dossierId}&submitted=1`;
+    if (scenario) {
+      nextPath += `&scenario=${scenario}`;
+    }
+    router.push(nextPath);
   }
 
   function renderField(field: any) {

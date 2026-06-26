@@ -2,27 +2,35 @@ import { CheckCircle, Clock, FileText, Loader2, Sparkles, ArrowRight, BrainCircu
 import PreviewScenarioNav from '@/components/client/PreviewScenarioNav';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import {
+  buildPreviewHref,
   getPreviewClientData,
   isDevAccessEnabled,
   normalizePreviewClientScenario,
 } from '@/lib/dev-access';
+import { devStore } from '@/lib/dev-store';
 import { createServerSupabaseClient } from '@/lib/supabase';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { lancerAnalyse } from './actions';
 
 interface Props {
-  searchParams?: { scenario?: string; submitted?: string };
+  searchParams?: { scenario?: string; submitted?: string; id?: string };
 }
 
 export default async function ClientAnalysePage({ searchParams }: Props) {
   const isPreview = isDevAccessEnabled();
   const previewScenario = normalizePreviewClientScenario(searchParams?.scenario);
+  const dossierId = searchParams?.id;
 
   let dossier: any = null;
 
   if (isPreview) {
-    dossier = getPreviewClientData(previewScenario).dossier;
+    if (dossierId) {
+      dossier = devStore.dossiers.find((d) => d.id === dossierId);
+    }
+    if (!dossier) {
+      dossier = getPreviewClientData(previewScenario).dossier;
+    }
   } else {
     const supabase = createServerSupabaseClient();
     const {
@@ -33,14 +41,14 @@ export default async function ClientAnalysePage({ searchParams }: Props) {
       redirect('/auth/login');
     }
 
-    const { data } = await supabase
-      .from('dossiers')
-      .select('*, documents(*)')
-      .eq('client_id', session.user.id)
-      .order('date_creation', { ascending: false })
-      .limit(1)
-      .single();
+    let query = supabase.from('dossiers').select('*, documents(*)').eq('client_id', session.user.id);
+    if (dossierId) {
+      query = query.eq('id', dossierId);
+    } else {
+      query = query.order('date_creation', { ascending: false }).limit(1);
+    }
 
+    const { data } = await query.maybeSingle();
     dossier = data;
   }
 
@@ -48,9 +56,17 @@ export default async function ClientAnalysePage({ searchParams }: Props) {
   const waitingOnDocuments = (dossier?.documents?.length || 0) === 0 && !analysisReady;
   const canLaunchAnalysis = dossier?.statut === 'analyse_en_cours' && !analysisReady;
 
+  const getRapportHref = () => {
+    if (!dossier) return '/dashboard/client/rapport';
+    if (isPreview) {
+      return buildPreviewHref('/dashboard/client/rapport', previewScenario) + `&id=${dossier.id}`;
+    }
+    return `/dashboard/client/rapport?id=${dossier.id}`;
+  };
+
   return (
     <DashboardLayout allowedRoles={['client']}>
-      <div className="mx-auto max-w-7xl space-y-8">
+      <div className="mx-auto max-w-7xl space-y-8 font-sans">
         {isPreview && (
           <PreviewScenarioNav
             currentPath="/dashboard/client/analyse"
@@ -59,19 +75,19 @@ export default async function ClientAnalysePage({ searchParams }: Props) {
         )}
 
         <div className="text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-1.5 text-sm font-medium text-primary-700">
+          <div className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-1.5 text-sm font-bold text-primary-700">
             <Sparkles size={14} />
             Intelligence Artificielle
           </div>
           <h1 className="mt-4 text-3xl font-extrabold text-gray-900">
-            {analysisReady ? 'Analyse terminee' : 'Analyse en cours'}
+            {analysisReady ? 'Analyse terminée' : 'Analyse en cours'}
           </h1>
           <p className="mt-2 text-gray-500">
             {waitingOnDocuments
-              ? 'Le dossier attend encore des pieces pour lancer l analyse.'
+              ? 'Le dossier attend encore des pièces pour lancer l\'analyse.'
               : analysisReady
-                ? 'Les conclusions de l analyse sont deja disponibles dans le rapport.'
-                : 'Notre IA travaille sur votre dossier en temps reel.'}
+                ? 'Les conclusions de l\'analyse sont déjà disponibles dans le rapport.'
+                : 'Notre IA travaille sur votre dossier en temps réel.'}
           </p>
         </div>
 
@@ -102,22 +118,22 @@ export default async function ClientAnalysePage({ searchParams }: Props) {
               )}
             </div>
           </div>
-          <p className="text-xl font-bold text-primary-900">
+          <p className="text-xl font-black text-primary-900">
             {waitingOnDocuments
-              ? 'En attente des pieces justificatives'
+              ? 'En attente des pièces justificatives'
               : analysisReady
-                ? 'Analyse finalisee'
-                : 'Delai estime : moins de 72h'}
+                ? 'Analyse finalisée'
+                : 'Délai estimé : moins de 72h'}
           </p>
-          <p className="mt-3 text-sm leading-relaxed text-primary-700">
+          <p className="mt-3 text-sm leading-relaxed text-primary-700 font-medium">
             {waitingOnDocuments
-              ? 'Le lancement de l analyse se declenche une fois les documents essentiels deposes.'
+              ? 'Le lancement de l\'analyse se déclenche une fois les documents essentiels déposés.'
               : analysisReady
-                ? 'Les irregularites ont ete consolidees et le memoire juridique est pret pour consultation.'
-                : 'Nous analysons vos pieces, extrayons les irregularites et redigeons votre rapport personnalise.'}
+                ? 'Les irrégularités ont été consolidées et le mémoire juridique est prêt pour consultation.'
+                : 'Nous analysons vos pièces, extrayons les irrégularités et rédigeons votre rapport personnalisé.'}
           </p>
 
-          {canLaunchAnalysis && (
+          {canLaunchAnalysis && dossier && (
             <form
               action={async () => {
                 'use server';
@@ -130,14 +146,14 @@ export default async function ClientAnalysePage({ searchParams }: Props) {
                 className="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary-600/20 transition-all hover:bg-primary-700 hover:scale-[1.02]"
               >
                 <BrainCircuit size={18} />
-                Lancer l analyse IA
+                Lancer l&apos;analyse IA
               </button>
             </form>
           )}
 
           {analysisReady && (
             <Link
-              href="/dashboard/client/rapport"
+              href={getRapportHref()}
               className="mt-8 inline-flex items-center gap-2 rounded-xl bg-primary-600 px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary-600/20 hover:bg-primary-700 transition-colors"
             >
               Voir mon rapport
@@ -148,28 +164,28 @@ export default async function ClientAnalysePage({ searchParams }: Props) {
 
         <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
           <h2 className="mb-6 text-sm font-bold uppercase tracking-wider text-gray-400">
-            Recapitulatif
+            Récapitulatif
           </h2>
           <div className="space-y-4">
             {[
               {
                 icon: <CheckCircle size={18} />,
-                label: 'Formulaire complete',
+                label: 'Formulaire complété',
                 done: !!dossier?.date_formulaire_complete,
               },
               {
                 icon: <CheckCircle size={18} />,
-                label: 'Documents deposes',
+                label: 'Documents déposés',
                 done: (dossier?.documents?.length || 0) > 0,
               },
               {
                 icon: <Clock size={18} />,
-                label: analysisReady ? 'Analyse finalisee' : 'Analyse IA en cours',
+                label: analysisReady ? 'Analyse finalisée' : 'Analyse IA en cours',
                 done: analysisReady,
               },
               {
                 icon: <FileText size={18} />,
-                label: 'Rapport genere',
+                label: 'Rapport généré',
                 done: !!dossier?.rapport_url,
               },
             ].map((item) => (

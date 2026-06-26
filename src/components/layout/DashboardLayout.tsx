@@ -17,12 +17,12 @@ export default async function DashboardLayout({ children, allowedRoles }: Dashbo
     const previewRole = getPreviewRole(allowedRoles);
 
     return (
-      <div className="flex h-screen bg-[#f8f9fa]">
-        <Suspense fallback={<div className="w-66 min-h-screen bg-white border-r border-slate-100" />}>
+      <div className="flex h-screen bg-[#f8f9fa] overflow-hidden">
+        <Suspense fallback={<div className="hidden lg:block w-66 min-h-screen bg-white border-r border-slate-100" />}>
           <Sidebar role={previewRole} canSwitchRoles />
         </Suspense>
         <div className="flex flex-1 overflow-hidden min-h-0">
-          <main className="flex-1 overflow-auto p-6 md:p-8 min-h-0">
+          <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8 min-h-0">
             <div className="w-full">
               <DashboardHeader />
               {children}
@@ -51,12 +51,12 @@ export default async function DashboardLayout({ children, allowedRoles }: Dashbo
   }
 
   return (
-    <div className="flex h-screen bg-[#f8f9fa]">
-      <Suspense fallback={<div className="w-66 min-h-screen bg-white border-r border-slate-100" />}>
+    <div className="flex h-screen bg-[#f8f9fa] overflow-hidden">
+      <Suspense fallback={<div className="hidden lg:block w-66 min-h-screen bg-white border-r border-slate-100" />}>
         <Sidebar role={profile.role as UserRole} />
       </Suspense>
       <div className="flex flex-1 overflow-hidden min-h-0">
-        <main className="flex-1 overflow-auto p-6 md:p-8 min-h-0">
+        <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8 min-h-0">
           <div className="w-full">
             <DashboardHeader />
             {children}

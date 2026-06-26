@@ -58,7 +58,7 @@ export default async function RegisterPage() {
 
         <div className="rounded-3xl border border-gray-200 bg-white p-8 shadow-xl shadow-gray-200/30">
           <form action={handleRegister} className="space-y-5">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="prenom" className="mb-2 flex items-center gap-2 text-sm font-semibold text-gray-700">
                   <User size={14} className="text-gray-400" />

@@ -78,6 +78,7 @@ export default async function AdminMessagesPage({ searchParams }: Props) {
         messages={messages}
         activeContactId={activeContact?.id || activeContactId}
         adminId={adminId || ''}
+        hasContactParam={!!searchParams?.contact}
       />
     </DashboardLayout>
   );

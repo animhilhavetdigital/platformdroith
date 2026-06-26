@@ -9,21 +9,28 @@ import {
   isDevAccessEnabled,
   normalizePreviewClientScenario,
 } from '@/lib/dev-access';
+import { devStore } from '@/lib/dev-store';
 import { createServerSupabaseClient } from '@/lib/supabase';
 import FormulaireForm from './FormulaireForm';
 import { resetFormulaire } from './actions';
 
 interface Props {
-  searchParams?: { scenario?: string };
+  searchParams?: { scenario?: string; id?: string };
 }
 
 export default async function ClientFormulairePage({ searchParams }: Props) {
   let dossier: any = null;
   const previewScenario = normalizePreviewClientScenario(searchParams?.scenario);
   const isPreview = isDevAccessEnabled();
+  const dossierId = searchParams?.id;
 
   if (isPreview) {
-    dossier = getPreviewClientData(previewScenario).dossier;
+    if (dossierId) {
+      dossier = devStore.dossiers.find((d) => d.id === dossierId);
+    }
+    if (!dossier) {
+      dossier = getPreviewClientData(previewScenario).dossier;
+    }
   } else {
     const supabase = createServerSupabaseClient();
 
@@ -35,14 +42,14 @@ export default async function ClientFormulairePage({ searchParams }: Props) {
       redirect('/auth/login');
     }
 
-    const { data } = await supabase
-      .from('dossiers')
-      .select('*')
-      .eq('client_id', session.user.id)
-      .order('date_creation', { ascending: false })
-      .limit(1)
-      .single();
+    let query = supabase.from('dossiers').select('*').eq('client_id', session.user.id);
+    if (dossierId) {
+      query = query.eq('id', dossierId);
+    } else {
+      query = query.order('date_creation', { ascending: false }).limit(1);
+    }
 
+    const { data } = await query.maybeSingle();
     dossier = data;
   }
 
@@ -51,9 +58,14 @@ export default async function ClientFormulairePage({ searchParams }: Props) {
   const dashboardHref = isPreview
     ? buildPreviewHref('/dashboard/client', previewScenario)
     : '/dashboard/client';
-  const analyseHref = isPreview
-    ? buildPreviewHref('/dashboard/client/analyse', previewScenario)
-    : '/dashboard/client/analyse';
+
+  const getAnalyseHref = () => {
+    if (!dossier) return '/dashboard/client';
+    if (isPreview) {
+      return buildPreviewHref('/dashboard/client/analyse', previewScenario) + `&id=${dossier.id}`;
+    }
+    return `/dashboard/client/analyse?id=${dossier.id}`;
+  };
 
   return (
     <DashboardLayout allowedRoles={['client']}>
@@ -126,10 +138,10 @@ export default async function ClientFormulairePage({ searchParams }: Props) {
                       key={key}
                       className="flex justify-between gap-6 border-b border-success-200 pb-2"
                     >
-                      <span className="capitalize">
+                      <span className="capitalize font-semibold text-success-800">
                         {key.replace(/_/g, ' ')}
                       </span>
-                      <span className="max-w-md text-right font-medium">
+                      <span className="max-w-md text-right font-bold">
                         {String(value)}
                       </span>
                     </div>
@@ -138,7 +150,7 @@ export default async function ClientFormulairePage({ searchParams }: Props) {
 
                 <p className="mt-4 text-sm text-success-800">
                   Pour la suite du parcours, consultez l&apos;étape{' '}
-                  <Link href={isPreview ? buildPreviewHref('/dashboard/client/analyse', previewScenario) : '/dashboard/client/analyse'} className="font-medium underline">
+                  <Link href={getAnalyseHref()} className="font-semibold underline">
                     Analyse en cours
                   </Link>
                   .
@@ -150,21 +162,21 @@ export default async function ClientFormulairePage({ searchParams }: Props) {
           <div className="rounded-2xl border border-success-200 bg-success-50 p-6">
             <div className="mb-4 flex items-center gap-3">
               <CheckCircle className="text-success-600" size={24} />
-              <h2 className="text-lg font-semibold text-success-900">
-                Formulaire deja complete
+              <h2 className="text-lg font-semibold text-success-900 font-sans">
+                Formulaire déjà complété
               </h2>
             </div>
-            <div className="space-y-3 text-sm text-success-900">
+            <div className="space-y-3 text-sm text-success-900 font-sans">
               {Object.entries(data).map(([key, value]) => (
                 <div key={key} className="flex justify-between border-b border-success-200 pb-2">
-                  <span className="capitalize">{key.replace(/_/g, ' ')}</span>
-                  <span className="font-medium">{String(value)}</span>
+                  <span className="capitalize font-semibold text-success-800">{key.replace(/_/g, ' ')}</span>
+                  <span className="font-bold">{String(value)}</span>
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-sm text-success-800">
+            <p className="mt-4 text-sm text-success-800 font-sans">
               Votre dossier est en attente d&apos;analyse. Rendez-vous sur{' '}
-              <Link href={isPreview ? buildPreviewHref('/dashboard/client/analyse', previewScenario) : '/dashboard/client/analyse'} className="font-medium underline">
+              <Link href={getAnalyseHref()} className="font-semibold underline">
                 Analyse en cours
               </Link>
               .
@@ -176,7 +188,7 @@ export default async function ClientFormulairePage({ searchParams }: Props) {
               <FormulaireForm dossierId={dossier.id} />
             ) : (
               <p className="text-gray-500">
-                Aucun dossier trouve. Veuillez contacter l&apos;administration.
+                Aucun dossier trouvé. Veuillez contacter l&apos;administration.
               </p>
             )}
           </div>

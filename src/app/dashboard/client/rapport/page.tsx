@@ -1,29 +1,39 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { Download, FileText, Shield, Sparkles, Scale, UserCheck, CheckCircle } from 'lucide-react';
+import { Download, FileText, Shield, Sparkles, Scale, UserCheck, CheckCircle, ArrowLeft, ArrowRight, User } from 'lucide-react';
 import PreviewScenarioNav from '@/components/client/PreviewScenarioNav';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import {
+  buildPreviewHref,
   getPreviewClientData,
   isDevAccessEnabled,
   normalizePreviewClientScenario,
 } from '@/lib/dev-access';
+import { devStore } from '@/lib/dev-store';
 import { createServerSupabaseClient } from '@/lib/supabase';
 import { formatDate } from '@/lib/utils';
 import { choisirAutonomie } from './actions';
 import PaymentTrigger from './PaymentTrigger';
 
 interface Props {
-  searchParams?: { scenario?: string };
+  searchParams?: { scenario?: string; id?: string };
 }
 
 export default async function ClientRapportPage({ searchParams }: Props) {
-  let dossier: any = null;
   const isPreview = isDevAccessEnabled();
   const previewScenario = normalizePreviewClientScenario(searchParams?.scenario);
 
+  let dossier: any = null;
+  let clientDossiers: any[] = [];
+
   if (isPreview) {
-    dossier = getPreviewClientData(previewScenario).dossier;
+    // In preview mode, load the selected scenario dossier to populate devStore
+    const scenarioDossier = getPreviewClientData(previewScenario).dossier;
+    clientDossiers = devStore.dossiers.filter((d) => d.client_id === 'preview-client');
+
+    if (searchParams?.id) {
+      dossier = devStore.dossiers.find((d) => d.id === searchParams.id);
+    }
   } else {
     const supabase = createServerSupabaseClient();
     const {
@@ -34,17 +44,164 @@ export default async function ClientRapportPage({ searchParams }: Props) {
       redirect('/auth/login');
     }
 
-    const { data } = await supabase
-      .from('dossiers')
-      .select('*')
-      .eq('client_id', session.user.id)
-      .order('date_creation', { ascending: false })
-      .limit(1)
-      .single();
+    if (searchParams?.id) {
+      const { data } = await supabase
+        .from('dossiers')
+        .select('*, client:profiles!dossiers_client_id_fkey(*), negotiator:profiles!dossiers_negotiator_id_fkey(*)')
+        .eq('client_id', session.user.id)
+        .eq('id', searchParams.id)
+        .single();
 
-    dossier = data;
+      dossier = data;
+    } else {
+      const { data } = await supabase
+        .from('dossiers')
+        .select('*, client:profiles!dossiers_client_id_fkey(*), negotiator:profiles!dossiers_negotiator_id_fkey(*)')
+        .eq('client_id', session.user.id)
+        .order('date_creation', { ascending: false });
+
+      clientDossiers = data || [];
+    }
   }
 
+  // Helper to build links while preserving the preview scenario if present
+  const getLinkHref = (path: string, dossierId?: string) => {
+    if (isPreview) {
+      const url = new URL(path, 'http://preview.local');
+      url.searchParams.set('scenario', previewScenario);
+      if (dossierId) {
+        url.searchParams.set('id', dossierId);
+      }
+      return `${url.pathname}?${url.searchParams.toString()}`;
+    }
+    return dossierId ? `${path}?id=${dossierId}` : path;
+  };
+
+  // If no specific dossier ID is selected, display the list of all available reports
+  if (!searchParams?.id) {
+    const dossiersAvecRapport = clientDossiers.filter((d) => 
+      d.rapport_url || 
+      (d.rapport_data && Object.keys(d.rapport_data).length > 0) ||
+      ['rapport_genere', 'livre', 'mediation_en_cours', 'autonomie', 'cloture', 'mediation_terminee'].includes(d.statut)
+    );
+
+    return (
+      <DashboardLayout allowedRoles={['client']}>
+        <div className="mx-auto max-w-7xl space-y-6">
+          {isPreview && (
+            <PreviewScenarioNav
+              currentPath="/dashboard/client/rapport"
+              currentScenario={previewScenario}
+            />
+          )}
+
+          <div>
+            <h1 className="text-3xl font-extrabold text-gray-900">Mes rapports</h1>
+            <p className="mt-2 text-gray-500">
+              Accédez à vos rapports d&apos;analyse juridique et suivez les conclusions pour chacun de vos dossiers.
+            </p>
+          </div>
+
+          {dossiersAvecRapport.length === 0 ? (
+            <div className="rounded-2xl border border-gray-100 bg-white p-12 text-center shadow-xl shadow-gray-100/50">
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gray-50">
+                <FileText size={40} className="text-gray-300" />
+              </div>
+              <h2 className="mt-6 text-xl font-bold text-gray-900">Aucun rapport disponible</h2>
+              <p className="mx-auto mt-3 max-w-md text-sm text-gray-500">
+                Vos mémoires d&apos;expertise s&apos;afficheront ici dès que l&apos;analyse IA ou l&apos;intervention du négociateur aura généré un rapport.
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2">
+              {dossiersAvecRapport.map((d) => {
+                const reportTitle = d.rapport_data?.title || 'Mémoire juridique de contestation';
+                const createdDate = new Date(d.date_creation).toLocaleDateString('fr-FR', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                });
+                const isMediationReport = !!d.negotiator_id;
+
+                return (
+                  <div 
+                    key={d.id}
+                    className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                  >
+                    <div className="space-y-4">
+                      {/* Badge and Ref */}
+                      <div className="flex items-center justify-between border-b border-gray-50 pb-3">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 font-mono">
+                          Dossier : {d.reference}
+                        </span>
+                        <div className="inline-flex items-center gap-1 text-xs font-bold text-primary-700 bg-primary-50 px-2.5 py-1 rounded-full">
+                          {isMediationReport ? (
+                            <>
+                              <User size={12} />
+                              Négociateur Expert
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles size={12} />
+                              Analyse IA
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Info body */}
+                      <div>
+                        <h3 className="text-base font-bold text-gray-900 line-clamp-1">{reportTitle}</h3>
+                        <p className="text-xs text-gray-500 mt-1 leading-relaxed line-clamp-2">
+                          {d.rapport_data?.summary || 'Consultez les conclusions détaillées de ce mémoire juridique.'}
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4 text-xs font-semibold text-gray-400 pt-2">
+                        <div>
+                          <p className="text-[9px] uppercase tracking-wider">Créé le</p>
+                          <p className="text-gray-700 mt-0.5">{createdDate}</p>
+                        </div>
+                        {d.formulaire_data?.organisme && (
+                          <div>
+                            <p className="text-[9px] uppercase tracking-wider">Organisme</p>
+                            <p className="text-gray-700 mt-0.5 truncate">{d.formulaire_data.organisme}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between gap-3">
+                      <Link
+                        href={getLinkHref('/dashboard/client/rapport', d.id)}
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-xs font-bold text-slate-700 py-3 transition-colors"
+                      >
+                        Consulter le mémoire
+                        <ArrowRight size={14} />
+                      </Link>
+
+                      {d.rapport_url && (
+                        <a
+                          href={d.rapport_url}
+                          download
+                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-500 hover:bg-primary-100 transition-colors"
+                          title="Télécharger"
+                        >
+                          <Download size={16} />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // If searchParams.id is present, render the detailed report view
   const reportData = (dossier?.rapport_data as Record<string, unknown>) || {};
   const irregularities = Array.isArray(reportData.irregularities)
     ? (reportData.irregularities as string[])
@@ -69,10 +226,18 @@ export default async function ClientRapportPage({ searchParams }: Props) {
           />
         )}
 
+        <Link
+          href={getLinkHref('/dashboard/client/rapport')}
+          className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-900"
+        >
+          <ArrowLeft size={18} />
+          Retour aux rapports
+        </Link>
+
         <div>
-          <h1 className="text-3xl font-extrabold text-gray-900">Mon rapport</h1>
+          <h1 className="text-3xl font-extrabold text-gray-900">Mémoire juridique</h1>
           <p className="mt-2 text-gray-500">
-            Consultez votre mémoire juridique et choisissez la suite à donner à votre dossier
+            Consultez le mémoire juridique et choisissez la suite à donner pour ce dossier
           </p>
         </div>
 
@@ -83,7 +248,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
             </div>
             <h2 className="mt-6 text-xl font-bold text-gray-900">Rapport en préparation</h2>
             <p className="mx-auto mt-3 max-w-md text-sm text-gray-500">
-              Votre rapport sera disponible ici une fois l&apos;analyse terminée.
+              Le rapport d&apos;analyse est en cours de modélisation pour ce dossier.
             </p>
           </div>
         ) : (
@@ -92,18 +257,18 @@ export default async function ClientRapportPage({ searchParams }: Props) {
             <div className="rounded-2xl border border-success-100 bg-white p-8 shadow-xl shadow-gray-100/50">
               <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
                 <div>
-                  <div className="inline-flex items-center gap-2 rounded-full bg-success-50 px-4 py-2 text-xs font-bold uppercase tracking-wider text-success-700">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-success-50 px-4 py-2 text-xs font-bold uppercase tracking-wider text-success-700 font-sans">
                     <Shield size={14} />
                     Rapport IA disponible
                   </div>
-                  <h2 className="mt-4 text-2xl font-bold text-gray-900">
+                  <h2 className="mt-4 text-2xl font-bold text-gray-900 font-sans">
                     {(reportData.title as string) || 'Mémoire juridique de contestation'}
                   </h2>
-                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-600">
-                    {(reportData.summary as string) || 'Le dossier est consolidé avec un rapport de démonstration.'}
+                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-600 font-sans">
+                    {(reportData.summary as string) || 'Le dossier est consolidé.'}
                   </p>
-                  <div className="mt-4 flex flex-wrap gap-3 text-sm text-gray-500">
-                    <span className="rounded-full bg-gray-100 px-3 py-1">
+                  <div className="mt-4 flex flex-wrap gap-3 text-sm text-gray-500 font-sans">
+                    <span className="rounded-full bg-gray-100 px-3 py-1 font-mono">
                       Référence: {dossier.reference}
                     </span>
                     <span className="rounded-full bg-gray-100 px-3 py-1">
@@ -117,7 +282,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 font-sans">
                   <div className="rounded-2xl border border-gray-100 bg-gray-50 px-5 py-4 text-center">
                     <p className="text-xs font-bold uppercase tracking-wider text-gray-400">Verdict</p>
                     <p className="mt-1 text-lg font-bold text-gray-900">
@@ -143,7 +308,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
               </div>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2 font-sans">
               <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400">
                   Irrégularités retenues
@@ -173,7 +338,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
 
             {/* Options après rapport */}
             {showNegotiatorOption && (
-              <div className="rounded-2xl border border-primary-100 bg-primary-50 p-6 shadow-sm">
+              <div className="rounded-2xl border border-primary-100 bg-primary-50 p-6 shadow-sm font-sans">
                 <h3 className="text-lg font-bold text-primary-900">Vous souhaitez être accompagné ?</h3>
                 <p className="mt-2 text-sm text-primary-800">
                   Un négociateur Droit Habitat peut prendre le relais pour une conciliation amiable avec votre organisme de crédit.
@@ -200,7 +365,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
             )}
 
             {isMediationActive && (
-              <div className="rounded-2xl border border-amber-100 bg-amber-50 p-6 shadow-sm">
+              <div className="rounded-2xl border border-amber-100 bg-amber-50 p-6 shadow-sm font-sans">
                 <div className="flex items-center gap-3">
                   <Sparkles size={20} className="text-amber-600" />
                   <div>
@@ -214,7 +379,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
             )}
 
             {isMediationDone && (
-              <div className="rounded-2xl border border-success-100 bg-success-50 p-6 shadow-sm">
+              <div className="rounded-2xl border border-success-100 bg-success-50 p-6 shadow-sm font-sans">
                 <div className="flex items-center gap-3">
                   <CheckCircle size={20} className="text-success-600" />
                   <div>
@@ -228,7 +393,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
             )}
 
             {isAutonomie && (
-              <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+              <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm font-sans">
                 <div className="flex items-center gap-3">
                   <UserCheck size={20} className="text-gray-600" />
                   <div>

@@ -28,7 +28,7 @@ export default async function AdminRapportsPage() {
           <p className="mt-1 text-gray-500">Liste des mémoires juridiques et audits générés par l&apos;intelligence artificielle</p>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>

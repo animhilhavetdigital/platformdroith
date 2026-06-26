@@ -55,6 +55,13 @@ export default async function LoginPage() {
         {/* Left Panel: Form or Dev Menu */}
         <div className="flex-1 flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-20 xl:px-24">
           <div className="mx-auto w-full max-w-sm">
+            {/* Logo visible only on mobile/tablet */}
+            <div className="flex lg:hidden justify-center mb-8">
+              <Link href="/">
+                <img src="/logo-expertise.png" alt="DroitHabitat" className="h-10 w-auto" />
+              </Link>
+            </div>
+
             {isDemoMode ? (
               // Mode Démo Local
               <div>

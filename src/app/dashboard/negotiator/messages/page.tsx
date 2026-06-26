@@ -2,8 +2,9 @@ import DashboardLayout from '@/components/layout/DashboardLayout';
 import { isDevAccessEnabled, getPreviewProfile } from '@/lib/dev-access';
 import { devStore } from '@/lib/dev-store';
 import { createServerSupabaseClient } from '@/lib/supabase';
-import { MessageCircle, User, Search, Send } from 'lucide-react';
+import { MessageCircle, User, Search, Send, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 interface Props {
   searchParams?: { contact?: string };
@@ -29,6 +30,7 @@ interface MessageItem {
 
 export default async function NegotiatorMessagesPage({ searchParams }: Props) {
   const isPreview = isDevAccessEnabled();
+  const hasContactParam = !!searchParams?.contact;
   const activeContactId = searchParams?.contact || 'admin';
 
   let contacts: Contact[] = [];
@@ -163,7 +165,7 @@ export default async function NegotiatorMessagesPage({ searchParams }: Props) {
         <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
           <div className="flex h-[600px]">
             {/* Contacts sidebar */}
-            <div className="w-full border-r border-gray-100 md:w-80">
+            <div className={cn("w-full border-r border-gray-100 md:w-80 md:block", hasContactParam ? "hidden" : "block")}>
               <div className="border-b border-gray-50 p-4">
                 <div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2">
                   <Search size={16} className="text-gray-400" />
@@ -180,9 +182,10 @@ export default async function NegotiatorMessagesPage({ searchParams }: Props) {
                   <Link
                     key={contact.id}
                     href={contact.href}
-                    className={`flex items-start gap-3 border-b border-gray-50 p-4 transition-colors hover:bg-gray-50 ${
-                      activeContact?.id === contact.id ? 'bg-primary-50/60' : ''
-                    }`}
+                    className={cn(
+                      "flex items-start gap-3 border-b border-gray-50 p-4 transition-colors hover:bg-gray-50",
+                      activeContact?.id === contact.id ? "bg-primary-50/60" : ""
+                    )}
                   >
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-500">
                       <User size={18} />
@@ -201,7 +204,18 @@ export default async function NegotiatorMessagesPage({ searchParams }: Props) {
             </div>
 
             {/* Chat area */}
-            <div className="hidden flex-1 flex-col md:flex">
+            <div className={cn("flex-1 flex-col md:flex", hasContactParam ? "flex" : "hidden")}>
+              {/* Back to contacts button on mobile */}
+              {hasContactParam && (
+                <Link
+                  href="/dashboard/negotiator/messages"
+                  className="flex md:hidden items-center gap-1 px-4 py-2.5 bg-gray-50 border-b border-gray-100 text-xs font-bold text-primary-600 uppercase tracking-wider"
+                >
+                  <ArrowLeft size={14} />
+                  Retour aux contacts
+                </Link>
+              )}
+
               {/* Header */}
               <div className="flex items-center gap-3 border-b border-gray-50 px-6 py-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-600">
