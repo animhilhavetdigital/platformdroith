@@ -176,7 +176,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
                         href={getLinkHref('/dashboard/client/rapport', d.id)}
                         className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-xs font-bold text-slate-700 py-3 transition-colors"
                       >
-                        Consulter le mémoire
+                        {isMediationReport ? 'Consulter le compte-rendu' : 'Consulter le mémoire'}
                         <ArrowRight size={14} />
                       </Link>
 
@@ -210,6 +210,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
     ? (reportData.recommendations as string[])
     : [];
 
+  const isMediationReport = !!dossier?.negotiator_id;
   const hasInitialReport = dossier?.rapport_url || irregularities.length > 0;
   const isMediationActive = dossier?.statut === 'mediation_en_cours';
   const isMediationDone = dossier?.statut === 'mediation_terminee';
@@ -235,9 +236,13 @@ export default async function ClientRapportPage({ searchParams }: Props) {
         </Link>
 
         <div>
-          <h1 className="text-3xl font-extrabold text-gray-900">Mémoire juridique</h1>
+          <h1 className="text-3xl font-extrabold text-gray-900">
+            {isMediationReport ? 'Compte-rendu de médiation' : 'Mémoire juridique'}
+          </h1>
           <p className="mt-2 text-gray-500">
-            Consultez le mémoire juridique et choisissez la suite à donner pour ce dossier
+            {isMediationReport
+              ? 'Consultez le compte-rendu de médiation et suivez l\'état d\'avancement pour ce dossier'
+              : 'Consultez le mémoire juridique et choisissez la suite à donner pour ce dossier'}
           </p>
         </div>
 
@@ -259,7 +264,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
                 <div>
                   <div className="inline-flex items-center gap-2 rounded-full bg-success-50 px-4 py-2 text-xs font-bold uppercase tracking-wider text-success-700 font-sans">
                     <Shield size={14} />
-                    Rapport IA disponible
+                    {isMediationReport ? 'Compte-rendu disponible' : 'Rapport IA disponible'}
                   </div>
                   <h2 className="mt-4 text-2xl font-bold text-gray-900 font-sans">
                     {(reportData.title as string) || 'Mémoire juridique de contestation'}
