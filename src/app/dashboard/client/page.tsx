@@ -127,7 +127,7 @@ export default async function ClientDashboard({ searchParams }: Props) {
             className="flex items-center justify-center gap-2 rounded-2xl bg-primary-600 px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-md shadow-primary-500/10 transition-all hover:scale-[1.01] hover:bg-primary-700 hover:shadow-lg w-full sm:w-auto"
           >
             <Plus size={16} />
-            Ajouter formulaire
+            Nouveau dossier
           </Link>
         </div>
 
