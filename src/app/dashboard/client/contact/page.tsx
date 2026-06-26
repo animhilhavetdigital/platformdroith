@@ -5,12 +5,12 @@ export default function ClientContactPage() {
   return (
     <DashboardLayout allowedRoles={['client']}>
       <div className="space-y-6 pb-8">
-        <div className="mx-auto max-w-7xl">
+        <div className="w-full">
           <h1 className="text-3xl font-extrabold text-gray-900">Contact</h1>
           <p className="mt-2 text-gray-500">Notre équipe est à votre écoute</p>
         </div>
 
-        <div className="mx-auto max-w-7xl grid gap-4 grid-cols-2 lg:grid-cols-4">
+        <div className="w-full grid gap-4 grid-cols-2 lg:grid-cols-4">
           {[
             { icon: <Mail size={22} />, title: 'Email', value: 'contact@droithabitat.fr', desc: 'Réponse sous 24h' },
             { icon: <Phone size={22} />, title: 'Téléphone', value: '+33 1 23 45 67 89', desc: 'Lun-Ven, 9h-18h' },

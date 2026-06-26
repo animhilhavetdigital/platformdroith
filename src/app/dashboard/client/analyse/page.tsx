@@ -1,4 +1,4 @@
-import { CheckCircle, Clock, FileText, Loader2, Sparkles, ArrowRight, BrainCircuit, Info } from 'lucide-react';
+import { CheckCircle, FileText, Loader2, Sparkles, ArrowRight, Info } from 'lucide-react';
 import PreviewScenarioNav from '@/components/client/PreviewScenarioNav';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import {
@@ -66,7 +66,7 @@ export default async function ClientAnalysePage({ searchParams }: Props) {
 
   return (
     <DashboardLayout allowedRoles={['client']}>
-      <div className="mx-auto max-w-7xl space-y-8 font-sans">
+      <div className="w-full space-y-8 font-sans">
         {isPreview && (
           <PreviewScenarioNav
             currentPath="/dashboard/client/analyse"
@@ -123,33 +123,15 @@ export default async function ClientAnalysePage({ searchParams }: Props) {
               ? 'En attente des pièces justificatives'
               : analysisReady
                 ? 'Analyse finalisée'
-                : 'Délai estimé : moins de 72h'}
+                : 'Analyse en cours'}
           </p>
           <p className="mt-3 text-sm leading-relaxed text-primary-700 font-medium">
             {waitingOnDocuments
-              ? 'Le lancement de l\'analyse se déclenche une fois les documents essentiels déposés.'
+              ? 'Une fois vos documents déposés, l\'analyse de votre dossier sera lancée automatiquement (délai estimé : 72h).'
               : analysisReady
                 ? 'Les irrégularités ont été consolidées et le mémoire juridique est prêt pour consultation.'
-                : 'Nous analysons vos pièces, extrayons les irrégularités et rédigeons votre rapport personnalisé.'}
+                : 'Votre dossier est en cours d\'analyse. Notre IA et nos experts analysent vos pièces (délai estimé : 72h).'}
           </p>
-
-          {canLaunchAnalysis && dossier && (
-            <form
-              action={async () => {
-                'use server';
-                await lancerAnalyse(dossier.id);
-              }}
-              className="mt-8"
-            >
-              <button
-                type="submit"
-                className="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary-600/20 transition-all hover:bg-primary-700 hover:scale-[1.02]"
-              >
-                <BrainCircuit size={18} />
-                Lancer l&apos;analyse IA
-              </button>
-            </form>
-          )}
 
           {analysisReady && (
             <Link
@@ -162,57 +144,6 @@ export default async function ClientAnalysePage({ searchParams }: Props) {
           )}
         </div>
 
-        <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
-          <h2 className="mb-6 text-sm font-bold uppercase tracking-wider text-gray-400">
-            Récapitulatif
-          </h2>
-          <div className="space-y-4">
-            {[
-              {
-                icon: <CheckCircle size={18} />,
-                label: 'Formulaire complété',
-                done: !!dossier?.date_formulaire_complete,
-              },
-              {
-                icon: <CheckCircle size={18} />,
-                label: 'Documents déposés',
-                done: (dossier?.documents?.length || 0) > 0,
-              },
-              {
-                icon: <Clock size={18} />,
-                label: analysisReady ? 'Analyse finalisée' : 'Analyse IA en cours',
-                done: analysisReady,
-              },
-              {
-                icon: <FileText size={18} />,
-                label: 'Rapport généré',
-                done: !!dossier?.rapport_url,
-              },
-            ].map((item) => (
-              <div
-                key={item.label}
-                className={`flex items-center gap-4 rounded-xl border p-4 ${
-                  item.done ? 'border-success-100 bg-success-50' : 'border-gray-100 bg-gray-50'
-                }`}
-              >
-                <div
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
-                    item.done ? 'bg-success-100 text-success-600' : 'bg-gray-200 text-gray-400'
-                  }`}
-                >
-                  {item.icon}
-                </div>
-                <span
-                  className={`text-sm font-semibold ${
-                    item.done ? 'text-success-900' : 'text-gray-500'
-                  }`}
-                >
-                  {item.label}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </DashboardLayout>
   );

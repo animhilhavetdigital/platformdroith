@@ -17,7 +17,7 @@ export default async function DashboardLayout({ children, allowedRoles }: Dashbo
     const previewRole = getPreviewRole(allowedRoles);
 
     return (
-      <div className="flex h-screen bg-[#f8f9fa] overflow-hidden">
+      <div className="flex h-screen bg-[#F6FBFF] overflow-hidden">
         <Suspense fallback={<div className="hidden lg:block w-66 min-h-screen bg-white border-r border-slate-100" />}>
           <Sidebar role={previewRole} canSwitchRoles />
         </Suspense>
@@ -51,7 +51,7 @@ export default async function DashboardLayout({ children, allowedRoles }: Dashbo
   }
 
   return (
-    <div className="flex h-screen bg-[#f8f9fa] overflow-hidden">
+    <div className="flex h-screen bg-[#F6FBFF] overflow-hidden">
       <Suspense fallback={<div className="hidden lg:block w-66 min-h-screen bg-white border-r border-slate-100" />}>
         <Sidebar role={profile.role as UserRole} />
       </Suspense>

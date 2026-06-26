@@ -11,7 +11,7 @@ import {
 } from '@/lib/dev-access';
 import { devStore } from '@/lib/dev-store';
 import { createServerSupabaseClient } from '@/lib/supabase';
-import { formatDate } from '@/lib/utils';
+import { formatDate, getDossierCardTheme } from '@/lib/utils';
 import { choisirAutonomie } from './actions';
 import PaymentTrigger from './PaymentTrigger';
 
@@ -87,7 +87,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
 
     return (
       <DashboardLayout allowedRoles={['client']}>
-        <div className="mx-auto max-w-7xl space-y-6">
+        <div className="w-full space-y-6">
           {isPreview && (
             <PreviewScenarioNav
               currentPath="/dashboard/client/rapport"
@@ -128,18 +128,20 @@ export default async function ClientRapportPage({ searchParams }: Props) {
                   year: 'numeric',
                 });
 
+                const reportTheme = isMediationReport ? getDossierCardTheme('médiation_en_cours') : getDossierCardTheme('analyse_en_cours');
+
                 return (
                   <div 
                     key={d.id}
-                    className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                    className={`rounded-2xl border ${reportTheme.border} ${reportTheme.gradient} p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between`}
                   >
                     <div className="space-y-4">
                       {/* Badge and Ref */}
-                      <div className="flex items-center justify-between border-b border-gray-50 pb-3">
+                      <div className="flex items-center justify-between border-b border-white/60 pb-3">
                         <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 font-mono">
                           Dossier : {d.reference}
                         </span>
-                        <div className="inline-flex items-center gap-1 text-xs font-bold text-primary-700 bg-primary-50 px-2.5 py-1 rounded-full">
+                        <div className={`inline-flex items-center gap-1 text-xs font-bold ${reportTheme.actionText} ${reportTheme.stepBg} px-2.5 py-1 rounded-full`}>
                           {isMediationReport ? (
                             <>
                               <User size={12} />
@@ -162,7 +164,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
                         </p>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4 text-xs font-semibold text-gray-400 pt-2">
+                      <div className="grid grid-cols-2 gap-4 text-xs font-semibold text-gray-500 pt-2">
                         <div>
                           <p className="text-[9px] uppercase tracking-wider">Créé le</p>
                           <p className="text-gray-700 mt-0.5">{createdDate}</p>
@@ -176,10 +178,10 @@ export default async function ClientRapportPage({ searchParams }: Props) {
                       </div>
                     </div>
 
-                    <div className="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between gap-3">
+                    <div className="mt-6 pt-4 border-t border-white/60 flex items-center justify-between gap-3">
                       <Link
                         href={getLinkHref('/dashboard/client/rapport', d.id)}
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-xs font-bold text-slate-700 py-3 transition-colors"
+                        className={`flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border ${reportTheme.border} bg-white text-xs font-bold text-gray-900 py-3 transition-colors hover:bg-slate-50 shadow-sm`}
                       >
                         {isMediationReport ? 'Consulter le compte-rendu' : 'Consulter le mémoire'}
                         <ArrowRight size={14} />
@@ -189,7 +191,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
                         <a
                           href={d.rapport_url}
                           download
-                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-500 hover:bg-primary-100 transition-colors"
+                          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${reportTheme.arrowBg} ${reportTheme.arrowText} transition-colors`}
                           title="Télécharger"
                         >
                           <Download size={16} />
@@ -224,7 +226,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
 
   return (
     <DashboardLayout allowedRoles={['client']}>
-      <div className="mx-auto max-w-7xl space-y-6">
+      <div className="w-full space-y-6">
         {isPreview && (
           <PreviewScenarioNav
             currentPath="/dashboard/client/rapport"

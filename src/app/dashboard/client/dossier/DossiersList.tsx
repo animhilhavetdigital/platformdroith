@@ -14,7 +14,7 @@ import {
   AlertCircle,
   FileText
 } from 'lucide-react';
-import { getStatusColor, getStatusLabel } from '@/lib/utils';
+import { getDossierCardTheme, getStatusColor, getStatusLabel } from '@/lib/utils';
 
 interface DossiersListProps {
   dossiers: any[];
@@ -73,15 +73,17 @@ export default function DossiersList({ dossiers }: DossiersListProps) {
             year: 'numeric',
           });
 
+          const theme = getDossierCardTheme(d.statut);
+
           return (
             <div 
               key={d.id}
-              className="relative group rounded-2xl border border-gray-100 bg-white p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between cursor-pointer"
+              className={`relative group rounded-2xl border ${theme.border} ${theme.gradient} p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between cursor-pointer`}
               onClick={() => router.push(getDossierHref(d))}
             >
               <div className="space-y-4">
                 {/* Top row */}
-                <div className="flex items-center justify-between border-b border-gray-50 pb-3">
+                <div className="flex items-center justify-between border-b border-white/60 pb-3">
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Référence</p>
                     <p className="text-sm font-bold text-gray-900 font-mono mt-0.5">{d.reference}</p>
@@ -90,7 +92,7 @@ export default function DossiersList({ dossiers }: DossiersListProps) {
                     <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${getStatusColor(d.statut)}`}>
                       {getStatusLabel(d.statut)}
                     </span>
-                    <span className="text-[10px] font-bold text-slate-500 bg-slate-50 px-2 py-0.5 rounded-md">
+                    <span className="text-[10px] font-bold text-slate-500 bg-white/70 px-2 py-0.5 rounded-md">
                       Offre : {getOfferLabel(d.offre)}
                     </span>
                   </div>
@@ -98,37 +100,43 @@ export default function DossiersList({ dossiers }: DossiersListProps) {
 
                 {/* Content row */}
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-gray-500">
-                    <Building size={14} className="text-gray-400" />
+                  <div className="flex items-center gap-2 text-xs font-semibold text-gray-600">
+                    <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg ${theme.iconBg} ${theme.iconText}`}>
+                      <Building size={14} />
+                    </div>
                     <span className="truncate">{creditDetails}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-xs font-semibold text-gray-500">
-                    <Calendar size={14} className="text-gray-400" />
+                  <div className="flex items-center gap-2 text-xs font-semibold text-gray-600">
+                    <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg ${theme.iconBg} ${theme.iconText}`}>
+                      <Calendar size={14} />
+                    </div>
                     <span>Créé le {createdDate}</span>
                   </div>
                   {d.formulaire_data?.montant_crédit && (
-                    <div className="flex items-center gap-2 text-xs font-semibold text-gray-500">
-                      <Banknote size={14} className="text-gray-400" />
+                    <div className="flex items-center gap-2 text-xs font-semibold text-gray-600">
+                      <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg ${theme.iconBg} ${theme.iconText}`}>
+                        <Banknote size={14} />
+                      </div>
                       <span>Montant : {d.formulaire_data.montant_crédit} €</span>
                     </div>
                   )}
                 </div>
 
                 {/* Timeline current step hint */}
-                <div className="rounded-xl bg-slate-50 p-3 flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-primary-500 animate-pulse shrink-0" />
-                  <span className="text-[11px] font-bold text-slate-600 truncate">{getDossierStageLabel(d)}</span>
+                <div className={`rounded-xl border ${theme.border} ${theme.stepBg} p-3 flex items-center gap-2`}>
+                  <div className={`h-2 w-2 rounded-full ${theme.stepDot} animate-pulse shrink-0`} />
+                  <span className={`text-[11px] font-bold ${theme.stepText} truncate`}>{getDossierStageLabel(d)}</span>
                 </div>
               </div>
 
               {/* Action buttons */}
               <div 
-                className="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between gap-3"
+                className="mt-6 pt-4 border-t border-white/60 flex items-center justify-between gap-3"
                 onClick={(e) => e.stopPropagation()} // Prevent card click redirect when clicking action buttons
               >
                 <button
                   onClick={() => setSelectedDossier(d)}
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100 text-xs font-bold text-slate-600 py-3 transition-colors"
+                  className={`flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border ${theme.border} bg-white text-xs font-bold text-gray-900 py-3 transition-colors hover:bg-slate-50 shadow-sm`}
                 >
                   <Info size={14} />
                   Informations générales
@@ -136,7 +144,7 @@ export default function DossiersList({ dossiers }: DossiersListProps) {
 
                 <button
                   onClick={() => router.push(getDossierHref(d))}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-500 hover:bg-primary-100 transition-colors"
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${theme.arrowBg} ${theme.arrowText} transition-colors`}
                   title="Consulter l'étape"
                 >
                   <ArrowRight size={16} />

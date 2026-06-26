@@ -69,7 +69,7 @@ export default async function ClientFormulairePage({ searchParams }: Props) {
 
   return (
     <DashboardLayout allowedRoles={['client']}>
-      <div className="mx-auto max-w-7xl space-y-6">
+      <div className="w-full space-y-6">
         {isPreview && (
           <PreviewScenarioNav
             currentPath="/dashboard/client/formulaire"

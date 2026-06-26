@@ -131,7 +131,7 @@ export default function Sidebar({ role, canSwitchRoles = false }: SidebarProps) 
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-66 bg-white border-r border-slate-100 flex flex-col px-4 py-6 transition-transform duration-300 lg:static lg:translate-x-0 lg:z-auto lg:min-h-screen lg:flex",
+          "fixed inset-y-0 left-0 z-50 w-66 bg-[#0f172a] border-r border-slate-800/80 flex flex-col px-4 py-6 transition-transform duration-300 lg:static lg:translate-x-0 lg:z-auto lg:min-h-screen lg:flex",
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
@@ -139,17 +139,17 @@ export default function Sidebar({ role, canSwitchRoles = false }: SidebarProps) 
       <div className="px-4 mb-6">
         <div className="flex justify-center mb-2">
           <Link href="/">
-            <img src="/logo-expertise.png" alt="DroitHabitat" className="h-10 w-auto" />
+            <img src="/logo-expertise.png" alt="DroitHabitat" className="h-10 w-auto brightness-200" />
           </Link>
         </div>
 
-        <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-slate-200 to-transparent my-4" />
+        <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-slate-800 to-transparent my-4" />
 
         {canSwitchRoles ? (
           <div className="relative mt-2">
             <select
               aria-label="Changer de role"
-              className="w-full appearance-none rounded-2xl bg-slate-50 border border-slate-100 px-4 py-2.5 pr-10 text-xs font-bold uppercase tracking-wider text-slate-600 outline-none transition-all hover:bg-slate-100 focus:bg-white focus:ring-2 focus:ring-primary-100"
+              className="w-full appearance-none rounded-2xl bg-slate-800/80 border border-slate-700/60 px-4 py-2.5 pr-10 text-xs font-bold uppercase tracking-wider text-slate-200 outline-none transition-all hover:bg-slate-800 focus:bg-slate-800 focus:ring-2 focus:ring-slate-700"
               value={role}
               onChange={handleRoleChange}
             >
@@ -165,7 +165,7 @@ export default function Sidebar({ role, canSwitchRoles = false }: SidebarProps) 
             />
           </div>
         ) : (
-          <div className="mt-2 inline-flex items-center rounded-xl bg-slate-50 border border-slate-100 px-3 py-1.5 text-xs font-bold text-slate-500 uppercase tracking-wider">
+          <div className="mt-2 inline-flex items-center rounded-xl bg-slate-800 border border-slate-700/60 px-3 py-1.5 text-xs font-bold text-slate-400 uppercase tracking-wider">
             {roleLabels[role]}
           </div>
         )}
@@ -182,8 +182,8 @@ export default function Sidebar({ role, canSwitchRoles = false }: SidebarProps) 
               className={cn(
                 'group flex items-center gap-3 px-4 py-3 rounded-2xl transition-all text-xs font-bold uppercase tracking-wider',
                 isActive
-                  ? 'bg-white text-slate-800 shadow-sm shadow-slate-200/60 border border-slate-100/50'
-                  : 'text-slate-400 hover:bg-slate-50/50 hover:text-slate-600'
+                  ? 'bg-primary-600 text-white shadow-lg shadow-primary-900/30 border border-primary-500/10'
+                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
               )}
             >
               <div
@@ -191,7 +191,7 @@ export default function Sidebar({ role, canSwitchRoles = false }: SidebarProps) 
                   'flex h-7 w-7 items-center justify-center rounded-xl transition-all',
                   isActive
                     ? 'bg-primary-500 text-white shadow-md shadow-primary-500/20'
-                    : 'bg-slate-50 text-slate-500 group-hover:bg-slate-100'
+                    : 'bg-slate-800 text-slate-400 group-hover:bg-slate-750 group-hover:text-slate-200'
                 )}
               >
                 {item.icon}
@@ -228,11 +228,11 @@ export default function Sidebar({ role, canSwitchRoles = false }: SidebarProps) 
       </div>
 
       {/* Footer */}
-      <div className="px-2 border-t border-slate-100 pt-4">
+      <div className="px-2 border-t border-slate-800/60 pt-4">
         <form action="/api/auth/signout" method="post">
           <button
             type="submit"
-            className="flex items-center gap-3 px-4 py-2.5 w-full rounded-2xl text-xs font-bold uppercase tracking-wider text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-all"
+            className="flex items-center gap-3 px-4 py-2.5 w-full rounded-2xl text-xs font-bold uppercase tracking-wider text-slate-400 hover:bg-slate-850 hover:text-red-400 transition-all"
           >
             <LogOut size={16} />
             <span>Déconnexion</span>

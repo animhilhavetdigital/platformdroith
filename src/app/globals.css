@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%; /* Light gray-blue background */
+    --background: 207 100% 98%; /* #F6FBFF light blue-white background */
     --foreground: 222 47% 11%;
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
@@ -20,10 +20,15 @@
     --accent-foreground: 222 47% 11%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 12% 92%; /* #E2E8F0 */
-    --input: 220 12% 92%;
+    --border: 214.3 31.8% 90.5%; /* Deeper contrast border */
+    --input: 214.3 31.8% 90.5%;
     --ring: 221.2 83.2% 53.3%;
-    --radius: 0.75rem; /* More rounded corners */
+    --radius: 1rem; /* More rounded premium corners */
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-title), sans-serif;
+    font-weight: 700;
   }
 }
 

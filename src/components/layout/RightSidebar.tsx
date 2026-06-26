@@ -87,6 +87,37 @@ const roleData: Record<
   },
 };
 
+function getDarkColor(colorStr: string) {
+  return colorStr
+    .replace('bg-primary-50', 'bg-primary-950/40')
+    .replace('bg-primary-100', 'bg-primary-900/40')
+    .replace('text-primary-600', 'text-primary-400')
+    .replace('text-primary-700', 'text-primary-300')
+    
+    .replace('bg-blue-50', 'bg-blue-950/40')
+    .replace('bg-blue-100', 'bg-blue-900/40')
+    .replace('text-blue-600', 'text-blue-400')
+    
+    .replace('bg-green-50', 'bg-green-950/40')
+    .replace('bg-green-100', 'bg-green-900/40')
+    .replace('text-green-600', 'text-green-400')
+    .replace('text-green-700', 'text-green-300')
+    
+    .replace('bg-amber-50', 'bg-amber-950/40')
+    .replace('bg-amber-100', 'bg-amber-900/40')
+    .replace('text-amber-600', 'text-amber-400')
+    .replace('text-amber-700', 'text-amber-300')
+    
+    .replace('bg-red-50', 'bg-red-950/40')
+    .replace('text-red-600', 'text-red-400')
+    
+    .replace('bg-purple-100', 'bg-purple-900/40')
+    .replace('text-purple-700', 'text-purple-300')
+    
+    .replace('bg-orange-100', 'bg-orange-900/40')
+    .replace('text-orange-700', 'text-orange-300');
+}
+
 export default function RightSidebar({ role = 'client' }: RightSidebarProps) {
   const [open, setOpen] = useState(false);
   const data = roleData[role] || roleData.client;
@@ -133,11 +164,11 @@ export default function RightSidebar({ role = 'client' }: RightSidebarProps) {
         className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm lg:hidden transition-opacity"
         onClick={() => setOpen(false)}
       />
-      <aside className="fixed inset-y-0 right-0 z-50 flex w-72 flex-col border-l border-gray-100 bg-white shadow-xl lg:static lg:z-auto lg:shadow-none lg:flex">
-      <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
+      <aside className="fixed inset-y-0 right-0 z-50 flex w-72 flex-col border-l border-slate-800/60 bg-[#0f172a] shadow-xl lg:static lg:z-auto lg:shadow-none lg:flex">
+      <div className="flex items-center justify-between border-b border-slate-800/60 px-5 py-4">
         <div className="flex items-center gap-2">
-          <Bell size={16} className="text-gray-700" />
-          <h2 className="text-sm font-bold text-gray-900">Notifications</h2>
+          <Bell size={16} className="text-slate-300" />
+          <h2 className="text-sm font-bold text-slate-100">Notifications</h2>
         </div>
         <div className="flex items-center gap-2">
           <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-primary-500 px-1.5 text-[10px] font-bold text-white">
@@ -145,7 +176,7 @@ export default function RightSidebar({ role = 'client' }: RightSidebarProps) {
           </span>
           <button
             onClick={() => setOpen(false)}
-            className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            className="rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-slate-200"
             aria-label="Fermer"
           >
             <X size={14} />
@@ -159,14 +190,14 @@ export default function RightSidebar({ role = 'client' }: RightSidebarProps) {
             {data.notifications.map((item) => (
               <div
                 key={item.id}
-                className="flex cursor-pointer items-start gap-3 rounded-xl p-2 transition-colors hover:bg-gray-50"
+                className="flex cursor-pointer items-start gap-3 rounded-xl p-2 transition-colors hover:bg-slate-800/50"
               >
-                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${item.color}`}>
+                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${getDarkColor(item.color)}`}>
                   {item.icon}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-semibold leading-snug text-gray-800">{item.title}</p>
-                  <p className="mt-0.5 text-[10px] font-medium text-gray-400">{item.time}</p>
+                  <p className="text-xs font-semibold leading-snug text-slate-200">{item.title}</p>
+                  <p className="mt-0.5 text-[10px] font-medium text-slate-400">{item.time}</p>
                 </div>
               </div>
             ))}
@@ -174,19 +205,19 @@ export default function RightSidebar({ role = 'client' }: RightSidebarProps) {
         </section>
 
         <section className="mt-6">
-          <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-gray-400">Activites</h3>
+          <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">Activites</h3>
           <div className="space-y-3">
             {data.activities.map((item) => (
               <div
                 key={item.id}
-                className="flex items-start gap-3 rounded-xl p-2 transition-colors hover:bg-gray-50"
+                className="flex items-start gap-3 rounded-xl p-2 transition-colors hover:bg-slate-800/50"
               >
-                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${item.color}`}>
+                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${getDarkColor(item.color)}`}>
                   {item.avatar}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-semibold leading-snug text-gray-800">{item.title}</p>
-                  <p className="mt-0.5 text-[10px] font-medium text-gray-400">{item.time}</p>
+                  <p className="text-xs font-semibold leading-snug text-slate-200">{item.title}</p>
+                  <p className="mt-0.5 text-[10px] font-medium text-slate-500">{item.time}</p>
                 </div>
               </div>
             ))}
@@ -194,17 +225,17 @@ export default function RightSidebar({ role = 'client' }: RightSidebarProps) {
         </section>
 
         <section className="mt-6">
-          <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-gray-400">Contacts</h3>
+          <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">Contacts</h3>
           <div className="space-y-2">
             {data.contacts.map((contact) => (
               <div
                 key={contact.id}
-                className="flex cursor-pointer items-center gap-3 rounded-xl p-2 transition-colors hover:bg-gray-50"
+                className="flex cursor-pointer items-center gap-3 rounded-xl p-2 transition-colors hover:bg-slate-800/50"
               >
                 <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white ${contact.color}`}>
                   {contact.initials}
                 </div>
-                <p className="text-xs font-bold text-gray-800">{contact.name}</p>
+                <p className="text-xs font-bold text-slate-200">{contact.name}</p>
               </div>
             ))}
           </div>

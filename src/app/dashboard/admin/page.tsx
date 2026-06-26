@@ -66,7 +66,7 @@ export default async function AdminDashboard({ searchParams }: Props) {
         )}
 
         <div className="mb-4">
-          <h2 className="text-base font-bold text-slate-800">Bienvenue dans l&apos;espace Super Admin</h2>
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Bienvenue dans l&apos;espace Super Admin</h1>
           <p className="text-xs text-slate-400 mt-0.5">Vue d&apos;ensemble de l&apos;activité Droit Habitat</p>
         </div>
 
@@ -192,7 +192,7 @@ export default async function AdminDashboard({ searchParams }: Props) {
 
 function StatCard({ title, value, icon, trend }: { title: string; value: number | string; icon: React.ReactNode; trend?: { value: string; isPositive: boolean } }) {
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm shadow-slate-100/50 transition-all hover:-translate-y-0.5 hover:shadow-md">
+    <div className="rounded-2xl border border-primary-100 bg-gradient-to-br from-primary-50 to-white p-6 shadow-sm shadow-primary-100/30 transition-all hover:-translate-y-0.5 hover:shadow-md">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{title}</p>
@@ -215,7 +215,7 @@ function StatCard({ title, value, icon, trend }: { title: string; value: number 
 
 function MetricCard({ title, value, trend }: { title: string; value: string; trend?: { value: string; isPositive: boolean } }) {
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm shadow-slate-100/50">
+    <div className="rounded-2xl border border-primary-100 bg-gradient-to-br from-primary-50 to-white p-5 shadow-sm shadow-primary-100/30">
       <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{title}</p>
       <div className="mt-3 flex items-baseline gap-2">
         <span className="text-lg font-bold text-slate-800">{value}</span>

@@ -81,10 +81,10 @@ export default async function NegotiatorDashboard({ searchParams }: Props) {
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
-          <StatCard title="Dossiers assignes" value={stats.total} icon={<FolderOpen size={22} />} color="bg-primary-50 text-primary-600" border="border-primary-100" />
-          <StatCard title="Mediations actives" value={stats.mediation} icon={<MessageSquare size={22} />} color="bg-amber-50 text-amber-600" border="border-amber-100" />
-          <StatCard title="En attente" value={stats.attente} icon={<Clock size={22} />} color="bg-yellow-50 text-yellow-700" border="border-yellow-100" />
-          <StatCard title="Clotures" value={stats.clotures} icon={<CheckCircle size={22} />} color="bg-green-50 text-green-600" border="border-green-100" />
+          <StatCard title="Dossiers assignes" value={stats.total} icon={<FolderOpen size={22} />} color="bg-primary-100 text-primary-600" border="border-primary-200" bg="bg-gradient-to-br from-primary-50 to-white" />
+          <StatCard title="Mediations actives" value={stats.mediation} icon={<MessageSquare size={22} />} color="bg-amber-100 text-amber-600" border="border-amber-200" bg="bg-gradient-to-br from-amber-50 to-white" />
+          <StatCard title="En attente" value={stats.attente} icon={<Clock size={22} />} color="bg-yellow-100 text-yellow-700" border="border-yellow-200" bg="bg-gradient-to-br from-yellow-50 to-white" />
+          <StatCard title="Clotures" value={stats.clotures} icon={<CheckCircle size={22} />} color="bg-green-100 text-green-600" border="border-green-200" bg="bg-gradient-to-br from-green-50 to-white" />
         </div>
 
         {isPreview && mediationQueue.length > 0 && (
@@ -157,9 +157,9 @@ export default async function NegotiatorDashboard({ searchParams }: Props) {
   );
 }
 
-function StatCard({ title, value, icon, color, border }: { title: string; value: number; icon: React.ReactNode; color: string; border: string }) {
+function StatCard({ title, value, icon, color, border, bg }: { title: string; value: number; icon: React.ReactNode; color: string; border: string; bg: string }) {
   return (
-    <div className={`rounded-2xl border ${border} bg-white p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md`}>
+    <div className={`rounded-2xl border ${border} ${bg} p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md`}>
       <div className="flex items-center justify-between">
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-gray-400">{title}</p>

@@ -8,7 +8,7 @@ import {
 } from '@/lib/dev-access';
 import { devStore } from '@/lib/dev-store';
 import { createServerSupabaseClient } from '@/lib/supabase';
-import { getStatusColor, getStatusLabel } from '@/lib/utils';
+import { getDossierCardTheme, getStatusColor, getStatusLabel } from '@/lib/utils';
 import { 
   CheckCircle, 
   Clock, 
@@ -134,8 +134,8 @@ export default async function ClientDashboard({ searchParams }: Props) {
         {/* Stats Summary Grid */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {/* Card 1: Total */}
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm flex items-center gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-600">
+          <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 shadow-sm flex items-center gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
               <Briefcase size={22} />
             </div>
             <div>
@@ -145,8 +145,8 @@ export default async function ClientDashboard({ searchParams }: Props) {
           </div>
 
           {/* Card 2: En attente */}
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm flex items-center gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+          <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-white p-6 shadow-sm flex items-center gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
               <Clock size={22} />
             </div>
             <div>
@@ -156,8 +156,8 @@ export default async function ClientDashboard({ searchParams }: Props) {
           </div>
 
           {/* Card 3: Analyse */}
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm flex items-center gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+          <div className="rounded-2xl border border-primary-200 bg-gradient-to-br from-primary-50 to-white p-6 shadow-sm flex items-center gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-primary-600">
               <Layers size={22} />
             </div>
             <div>
@@ -167,8 +167,8 @@ export default async function ClientDashboard({ searchParams }: Props) {
           </div>
 
           {/* Card 4: Rapports & Mediation */}
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm flex items-center gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-success-50 text-success-600">
+          <div className="rounded-2xl border border-success-200 bg-gradient-to-br from-success-50 to-white p-6 shadow-sm flex items-center gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-success-100 text-success-600">
               <CheckCircle size={22} />
             </div>
             <div>
@@ -204,14 +204,16 @@ export default async function ClientDashboard({ searchParams }: Props) {
                   year: 'numeric',
                 });
 
+                const theme = getDossierCardTheme(d.statut);
+
                 return (
                   <div 
                     key={d.id}
-                    className="relative group rounded-2xl border border-gray-100 bg-white p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                    className={`relative group rounded-2xl border ${theme.border} ${theme.gradient} p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between`}
                   >
                     <div className="space-y-4">
                       {/* Top row */}
-                      <div className="flex items-center justify-between border-b border-gray-50 pb-3">
+                      <div className="flex items-center justify-between border-b border-white/60 pb-3">
                         <div>
                           <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Référence</p>
                           <p className="text-sm font-bold text-gray-900 font-mono mt-0.5">{d.reference}</p>
@@ -223,39 +225,45 @@ export default async function ClientDashboard({ searchParams }: Props) {
 
                       {/* Content row */}
                       <div className="space-y-2">
-                        <div className="flex items-center gap-2 text-xs font-semibold text-gray-500">
-                          <Building size={14} className="text-gray-400" />
+                        <div className="flex items-center gap-2 text-xs font-semibold text-gray-600">
+                          <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg ${theme.iconBg} ${theme.iconText}`}>
+                            <Building size={14} />
+                          </div>
                           <span className="truncate">{creditDetails}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-xs font-semibold text-gray-500">
-                          <Clock size={14} className="text-gray-400" />
+                        <div className="flex items-center gap-2 text-xs font-semibold text-gray-600">
+                          <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg ${theme.iconBg} ${theme.iconText}`}>
+                            <Clock size={14} />
+                          </div>
                           <span>Créé le {createdDate}</span>
                         </div>
                         {d.formulaire_data?.montant_crédit && (
-                          <div className="flex items-center gap-2 text-xs font-semibold text-gray-500">
-                            <Banknote size={14} className="text-gray-400" />
+                          <div className="flex items-center gap-2 text-xs font-semibold text-gray-600">
+                            <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg ${theme.iconBg} ${theme.iconText}`}>
+                              <Banknote size={14} />
+                            </div>
                             <span>Montant : {d.formulaire_data.montant_crédit} €</span>
                           </div>
                         )}
                       </div>
 
                       {/* Timeline current step hint */}
-                      <div className="rounded-xl bg-gray-50 p-3 flex items-center gap-2">
-                        <div className="h-2 w-2 rounded-full bg-primary-500 animate-pulse shrink-0" />
-                        <span className="text-[11px] font-bold text-gray-600 truncate">{getDossierStageLabel(d)}</span>
+                      <div className={`rounded-xl border ${theme.border} ${theme.stepBg} p-3 flex items-center gap-2`}>
+                        <div className={`h-2 w-2 rounded-full ${theme.stepDot} animate-pulse shrink-0`} />
+                        <span className={`text-[11px] font-bold ${theme.stepText} truncate`}>{getDossierStageLabel(d)}</span>
                       </div>
                     </div>
 
-                    <div className="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between gap-4">
+                    <div className="mt-6 pt-4 border-t border-white/60 flex items-center justify-between gap-4">
                       <Link
                         href={getDossierHref(d)}
-                        className="flex-1 text-center rounded-xl bg-primary-50 hover:bg-primary-100 text-xs font-bold text-primary-700 py-3 transition-colors font-sans"
+                        className={`flex-1 text-center rounded-xl border ${theme.border} bg-white text-xs font-bold text-gray-900 py-3 transition-colors hover:bg-slate-50 shadow-sm font-sans`}
                       >
                         Consulter l&apos;étape
                       </Link>
                       <Link
                         href={getDossierHref(d)}
-                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:text-slate-600 transition-colors"
+                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${theme.arrowBg} ${theme.arrowText} transition-colors`}
                         title="Détails"
                       >
                         <ArrowRight size={16} />
