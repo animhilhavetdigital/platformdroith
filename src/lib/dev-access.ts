@@ -14,7 +14,6 @@ export type PreviewClientScenario =
   | 'orientation'
   | 'mediation'
   | 'autonomy'
-  | 'avocat'
   | 'closed';
 
 export type PreviewAdminScenario = 'overview' | 'backlog' | 'growth';
@@ -25,20 +24,22 @@ const DEFAULT_PREVIEW_CLIENT_SCENARIO: PreviewClientScenario = 'mediation';
 const DEFAULT_PREVIEW_ADMIN_SCENARIO: PreviewAdminScenario = 'overview';
 const DEFAULT_PREVIEW_NEGOTIATOR_SCENARIO: PreviewNegotiatorScenario = 'active';
 
+const ALL_PREVIEW_CLIENT_SCENARIOS: PreviewClientScenario[] = [
+  'new', 'form', 'documents', 'analysis', 'report', 'orientation', 'mediation', 'autonomy', 'closed',
+];
+
 export const PREVIEW_CLIENT_SCENARIOS: Array<{
   id: PreviewClientScenario;
   label: string;
   description: string;
 }> = [
   { id: 'new', label: 'Nouveau', description: 'Dossier cree, aucune information encore saisie.' },
-  { id: 'form', label: 'Formulaire', description: 'Formulaire en cours de remplissage.' },
-  { id: 'documents', label: 'Documents', description: 'Formulaire valide, pieces encore attendues.' },
+  { id: 'form', label: 'Formulaire & Documents', description: 'Le client renseigne son dossier et depose ses pieces.' },
   { id: 'analysis', label: 'Analyse', description: 'Pieces deposees, analyse IA en cours.' },
   { id: 'report', label: 'Rapport', description: 'Rapport pret et consultable.' },
   { id: 'orientation', label: 'Orientation', description: 'Le client choisit la suite a donner.' },
-  { id: 'mediation', label: 'Mediation', description: 'Conciliation amiable deja engagee.' },
+  { id: 'mediation', label: 'Negociateur', description: 'Conciliation amiable deja engagee.' },
   { id: 'autonomy', label: 'Autonomie', description: 'Le client repart avec son dossier complet.' },
-  { id: 'avocat', label: 'Avocat', description: 'Transmission structuree a un avocat partenaire.' },
   { id: 'closed', label: 'Cloture', description: 'Parcours termine, retour qualite affiche.' },
 ];
 
@@ -154,8 +155,8 @@ export function getPreviewRoleFromPath(pathname: string): UserRole {
 }
 
 export function normalizePreviewClientScenario(scenario?: string): PreviewClientScenario {
-  const match = PREVIEW_CLIENT_SCENARIOS.find((item) => item.id === scenario);
-  return match?.id ?? DEFAULT_PREVIEW_CLIENT_SCENARIO;
+  const match = ALL_PREVIEW_CLIENT_SCENARIOS.find((id) => id === scenario);
+  return match ?? DEFAULT_PREVIEW_CLIENT_SCENARIO;
 }
 
 export function normalizePreviewAdminScenario(scenario?: string): PreviewAdminScenario {
@@ -420,28 +421,6 @@ export function getPreviewClientData(
         rapport_data: DEMO_REPORT_DATA,
         scoring_verdict: 'OUI',
         scoring_confiance: 7,
-      });
-      break;
-
-    case 'avocat':
-      dossier = buildPreviewDossier({
-        id: 'dos-client-avocat',
-        reference: 'DH-2026-CL-015',
-        statut: 'avocat',
-        offre: '3',
-        client,
-        negotiator_id: 'preview-negotiator',
-        date_creation: daysAgo(15),
-        date_formulaire_complete: daysAgo(14),
-        date_upload_complete: daysAgo(11),
-        date_analyse_debut: daysAgo(9),
-        date_livraison: daysAgo(4),
-        formulaire_data: DEMO_FORM_DATA,
-        documents: cloneDocumentsForDossier('dos-client-avocat'),
-        rapport_url: '/demo/rapport.pdf',
-        rapport_data: DEMO_REPORT_DATA,
-        scoring_verdict: 'OUI',
-        scoring_confiance: 9,
       });
       break;
 

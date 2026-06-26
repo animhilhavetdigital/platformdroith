@@ -1,4 +1,4 @@
-import { CheckCircle, Clock, FileText, Loader2, Sparkles, ArrowRight, BrainCircuit } from 'lucide-react';
+import { CheckCircle, Clock, FileText, Loader2, Sparkles, ArrowRight, BrainCircuit, Info } from 'lucide-react';
 import PreviewScenarioNav from '@/components/client/PreviewScenarioNav';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import {
@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { lancerAnalyse } from './actions';
 
 interface Props {
-  searchParams?: { scenario?: string };
+  searchParams?: { scenario?: string; submitted?: string };
 }
 
 export default async function ClientAnalysePage({ searchParams }: Props) {
@@ -74,6 +74,18 @@ export default async function ClientAnalysePage({ searchParams }: Props) {
                 : 'Notre IA travaille sur votre dossier en temps reel.'}
           </p>
         </div>
+
+        {searchParams?.submitted && !analysisReady && (
+          <div className="rounded-2xl border border-success-200 bg-success-50 p-6 text-center">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-success-100 text-success-600">
+              <Info size={24} />
+            </div>
+            <h2 className="mt-3 text-lg font-bold text-success-900">Dossier bien reçu</h2>
+            <p className="mt-1 text-sm text-success-800">
+              Votre formulaire et vos documents ont été transmis. Vous pouvez maintenant lancer l&apos;analyse IA.
+            </p>
+          </div>
+        )}
 
         <div className="rounded-2xl border border-primary-100 bg-gradient-to-br from-primary-50 to-white p-12 text-center shadow-xl shadow-primary-100/30">
           <div className="relative mx-auto mb-8 h-20 w-20">

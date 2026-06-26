@@ -15,7 +15,19 @@ interface PreviewScenarioNavProps {
   title?: string;
   hubPath?: string;
   hubLabel?: string;
+  scenarioPaths?: Record<string, string>;
 }
+
+const CLIENT_SCENARIO_PATHS: Record<string, string> = {
+  new: '/dashboard/client',
+  form: '/dashboard/client/formulaire',
+  analysis: '/dashboard/client/analyse',
+  report: '/dashboard/client/rapport',
+  orientation: '/dashboard/client/orientation',
+  mediation: '/dashboard/client/negociateur',
+  autonomy: '/dashboard/client',
+  closed: '/dashboard/client/negociateur',
+};
 
 export default function PreviewScenarioNav({
   currentPath,
@@ -24,10 +36,17 @@ export default function PreviewScenarioNav({
   title = 'Demo client',
   hubPath = '/dashboard/client',
   hubLabel = 'Retour au hub client',
+  scenarioPaths,
 }: PreviewScenarioNavProps) {
   const activeScenario =
     scenarios.find((scenario) => scenario.id === currentScenario) ??
     scenarios[0];
+
+  const getScenarioHref = (scenarioId: string) => {
+    const mapping = scenarioPaths || (title === 'Demo client' ? CLIENT_SCENARIO_PATHS : undefined);
+    const basePath = mapping?.[scenarioId] || currentPath;
+    return buildPreviewHref(basePath, scenarioId);
+  };
 
   return (
     <div className="rounded-2xl border border-sky-100 bg-sky-50/80 p-4 shadow-sm">
@@ -53,7 +72,7 @@ export default function PreviewScenarioNav({
         {scenarios.map((scenario) => (
           <Link
             key={scenario.id}
-            href={buildPreviewHref(currentPath, scenario.id)}
+            href={getScenarioHref(scenario.id)}
             className={cn(
               'rounded-full px-3 py-1.5 text-xs font-semibold transition-colors',
               scenario.id === currentScenario

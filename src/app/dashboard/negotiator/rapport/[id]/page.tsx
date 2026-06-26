@@ -84,7 +84,7 @@ export default async function NegotiatorReportPage({ params }: Props) {
       <div className="max-w-3xl mx-auto space-y-8 py-4">
         <div className="flex items-center gap-3">
           <Link
-            href={`/dashboard/negociateur/dossiers/${params.id}`}
+            href={`/dashboard/negotiator/dossiers/${params.id}`}
             className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 transition-colors"
           >
             <ArrowLeft size={16} />
@@ -178,7 +178,7 @@ export default async function NegotiatorReportPage({ params }: Props) {
                 type="text"
                 name="prochaine_etape"
                 required
-                placeholder="ex: Signature du protocole d'accord ou Relais Avocat pour contentieux"
+                placeholder="ex: Signature du protocole d'accord ou suite interne"
                 className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm outline-none transition-all focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
               />
             </div>

@@ -51,9 +51,9 @@ export default async function ClientFormulairePage({ searchParams }: Props) {
   const dashboardHref = isPreview
     ? buildPreviewHref('/dashboard/client', previewScenario)
     : '/dashboard/client';
-  const documentsHref = isPreview
-    ? buildPreviewHref('/dashboard/client/documents', previewScenario)
-    : '/dashboard/client/documents';
+  const analyseHref = isPreview
+    ? buildPreviewHref('/dashboard/client/analyse', previewScenario)
+    : '/dashboard/client/analyse';
 
   return (
     <DashboardLayout allowedRoles={['client']}>
@@ -86,7 +86,7 @@ export default async function ClientFormulairePage({ searchParams }: Props) {
                   <strong>Mode Démo :</strong> Vous pouvez remplir ce formulaire interactif pour tester l&apos;expérience client.
                 </div>
                 {dossier ? (
-                  <FormulaireForm dossierId={dossier.id} />
+                  <FormulaireForm dossierId={dossier.id} initialData={dossier.formulaire_data as Record<string, unknown>} />
                 ) : (
                   <p className="text-gray-500">Aucun dossier trouvé.</p>
                 )}
@@ -137,9 +137,9 @@ export default async function ClientFormulairePage({ searchParams }: Props) {
                 </div>
 
                 <p className="mt-4 text-sm text-success-800">
-                  Pour la suite du parcours, déposez vos documents à l&apos;étape{' '}
-                  <Link href={documentsHref} className="font-medium underline">
-                    Documents
+                  Pour la suite du parcours, consultez l&apos;étape{' '}
+                  <Link href={isPreview ? buildPreviewHref('/dashboard/client/analyse', previewScenario) : '/dashboard/client/analyse'} className="font-medium underline">
+                    Analyse en cours
                   </Link>
                   .
                 </p>
@@ -163,11 +163,11 @@ export default async function ClientFormulairePage({ searchParams }: Props) {
               ))}
             </div>
             <p className="mt-4 text-sm text-success-800">
-              Vous pouvez maintenant{' '}
-              <Link href={documentsHref} className="font-medium underline">
-                deposer vos documents
-              </Link>{' '}
-              si ce n&apos;est pas deja fait.
+              Votre dossier est en attente d&apos;analyse. Rendez-vous sur{' '}
+              <Link href={isPreview ? buildPreviewHref('/dashboard/client/analyse', previewScenario) : '/dashboard/client/analyse'} className="font-medium underline">
+                Analyse en cours
+              </Link>
+              .
             </p>
           </div>
         ) : (

@@ -66,7 +66,7 @@ export default async function AdminNegociationsPage() {
                       )}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500">
-                      {dossier.offre === '1' ? 'Diagnostic' : dossier.offre === '2' ? 'Médiation' : 'Avocat'}
+                      {dossier.offre === '1' ? 'Diagnostic' : dossier.offre === '2' ? 'Médiation' : 'Accompagnement complet'}
                     </td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${getStatusColor(dossier.statut)}`}>
@@ -75,7 +75,7 @@ export default async function AdminNegociationsPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <Link
-                        href={`/dashboard/super-admin/dossiers/${dossier.id}`}
+                        href={`/dashboard/admin/dossiers/${dossier.id}`}
                         className="inline-flex h-8 w-8 items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 transition-colors"
                       >
                         <ArrowRight size={16} />

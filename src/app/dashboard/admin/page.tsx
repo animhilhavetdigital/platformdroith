@@ -168,7 +168,7 @@ export default async function AdminDashboard({ searchParams }: Props) {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-xs font-semibold text-slate-500">
-                        {dossier.offre === '1' ? 'Diagnostic' : dossier.offre === '2' ? 'Médiation' : dossier.offre === '3' ? 'Relais avocat' : 'Offre ' + dossier.offre}
+                        {dossier.offre === '1' ? 'Diagnostic' : dossier.offre === '2' ? 'Médiation' : dossier.offre === '3' ? 'Accompagnement complet' : 'Offre ' + dossier.offre}
                       </td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex rounded-xl px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider ${getStatusColor(dossier.statut)}`}>

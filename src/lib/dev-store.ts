@@ -37,6 +37,14 @@ export interface DevNegotiationAction {
   created_at: string;
 }
 
+export interface DevMessage {
+  id: string;
+  sender_id: string;
+  recipient_id: string;
+  content: string;
+  created_at: string;
+}
+
 interface DevStore {
   mediationEtapes: Record<string, MediationEtape[]>;
   clientsPayes: DevPayment[];
@@ -44,6 +52,7 @@ interface DevStore {
   dossiers: Dossier[];
   emails: DevEmail[];
   negotiationActions: Record<string, DevNegotiationAction[]>;
+  messages: DevMessage[];
   initialized: boolean;
 }
 
@@ -65,6 +74,7 @@ export const devStore: DevStore = globalStore || {
   dossiers: [],
   emails: [],
   negotiationActions: {},
+  messages: [],
   initialized: false,
 };
 
@@ -77,8 +87,10 @@ if (!devStore.initialized) {
       role: 'super_admin',
       nom: 'Admin',
       prenom: 'Demo',
+      email: 'admin@preview.local',
       téléphone: '+33 6 11 22 33 44',
       avatar_url: undefined,
+      status: 'active',
       created_at: daysAgo(90),
       updated_at: daysAgo(1),
     },
@@ -87,8 +99,10 @@ if (!devStore.initialized) {
       role: 'negotiator',
       nom: 'Bennani',
       prenom: 'Samir',
+      email: 'samir.bennani@example.com',
       téléphone: '+33 6 55 44 33 22',
       avatar_url: undefined,
+      status: 'active',
       created_at: daysAgo(120),
       updated_at: daysAgo(1),
     },
@@ -97,10 +111,24 @@ if (!devStore.initialized) {
       role: 'client',
       nom: 'Alaoui',
       prenom: 'Nadia',
+      email: 'nadia.alaoui@example.com',
       téléphone: '+33 6 77 88 99 11',
       avatar_url: undefined,
+      status: 'active',
       created_at: daysAgo(20),
       updated_at: daysAgo(1),
+    },
+    {
+      id: 'preview-client-2',
+      role: 'client',
+      nom: 'El Idrissi',
+      prenom: 'Yassine',
+      email: 'yassine.elidrissi@example.com',
+      téléphone: '+33 6 12 34 56 78',
+      avatar_url: undefined,
+      status: 'active',
+      created_at: daysAgo(2),
+      updated_at: daysAgo(2),
     },
   ];
 
@@ -150,6 +178,31 @@ if (!devStore.initialized) {
       date_cloture: null,
       created_at: daysAgo(10),
       updated_at: daysAgo(2),
+    },
+    {
+      id: 'dos-client-2',
+      reference: 'DH-2026-000015',
+      statut: 'formulaire_en_cours',
+      offre: '2',
+      client_id: 'preview-client-2',
+      negotiator_id: null,
+      formulaire_data: {},
+      scoring_verdict: null,
+      scoring_confiance: null,
+      scoring_justification: null,
+      montant_paye: 199.00,
+      stripe_payment_id: null,
+      date_paiement: daysAgo(2),
+      date_creation: daysAgo(2),
+      date_formulaire_complete: null,
+      date_upload_complete: null,
+      date_analyse_debut: null,
+      date_livraison: null,
+      date_cloture: null,
+      rapport_url: null,
+      rapport_data: {},
+      created_at: daysAgo(2),
+      updated_at: daysAgo(2),
     }
   ];
 
@@ -165,7 +218,9 @@ if (!devStore.initialized) {
       offer_type: '2',
       payment_type: 'initial_offer',
       payment_status: 'paid',
-      platform_status: 'to_create',
+      platform_status: 'account_created',
+      user_id: 'preview-client-2',
+      dossier_id: 'dos-client-2',
       created_at: daysAgo(2),
     },
     {

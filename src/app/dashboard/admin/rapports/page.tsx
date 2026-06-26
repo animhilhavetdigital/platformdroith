@@ -63,7 +63,7 @@ export default async function AdminRapportsPage() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <Link
-                      href={`/dashboard/super-admin/dossiers/${report.id}`}
+                      href={`/dashboard/admin/dossiers/${report.id}`}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 transition-colors"
                     >
                       <ArrowRight size={16} />

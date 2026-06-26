@@ -19,7 +19,7 @@ export default async function AdminEmailsPage() {
   async function handleResendEmail(formData: FormData) {
     'use server';
     // Simulate resend
-    revalidatePath('/dashboard/super-admin/emails');
+    revalidatePath('/dashboard/admin/emails');
   }
 
   return (

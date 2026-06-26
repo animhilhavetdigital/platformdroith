@@ -63,7 +63,7 @@ export default async function NegotiatorHistoryPage() {
                     </div>
                   </td>
                   <td className="px-4 py-4 text-sm font-semibold text-gray-700">
-                    {dossier.offre === '1' ? 'Diagnostic' : dossier.offre === '2' ? 'Médiation' : dossier.offre === '3' ? 'Avocat' : 'Médiation'}
+                    {dossier.offre === '1' ? 'Diagnostic' : dossier.offre === '2' ? 'Médiation' : dossier.offre === '3' ? 'Accompagnement complet' : 'Médiation'}
                   </td>
                   <td className="px-4 py-4">
                     <span className={`inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${getStatusColor(dossier.statut)}`}>
@@ -77,7 +77,7 @@ export default async function NegotiatorHistoryPage() {
                   </td>
                   <td className="px-4 py-4 text-right">
                     <Link
-                      href={`/dashboard/negociateur/dossiers/${dossier.id}`}
+                      href={`/dashboard/negotiator/dossiers/${dossier.id}`}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 transition-colors"
                     >
                       <ArrowRight size={16} />

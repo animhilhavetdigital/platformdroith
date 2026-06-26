@@ -13,7 +13,6 @@ export default function PaiementForm() {
   const offres: Record<string, { nom: string; prix: string; prixNum: string }> = {
     '1': { nom: 'Diagnostic', prix: '99 €', prixNum: '99' },
     '2': { nom: 'Médiation', prix: '199 €', prixNum: '199' },
-    '3': { nom: 'Relais Avocat', prix: '399 €', prixNum: '399' },
   };
 
   const offre = offres[offreId] || offres['2'];

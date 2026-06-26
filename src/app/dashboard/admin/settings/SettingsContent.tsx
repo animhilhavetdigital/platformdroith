@@ -249,7 +249,7 @@ export default function SettingsContent({ data }: SettingsContentProps) {
                     </div>
                     <p className="mt-3 text-sm font-bold text-gray-900">{clientName}</p>
                     <p className="text-xs text-gray-400">
-                      {dossier.offre === '1' ? 'Diagnostic' : dossier.offre === '2' ? 'Mediation' : 'Relais avocat'}
+                      {dossier.offre === '1' ? 'Diagnostic' : dossier.offre === '2' ? 'Mediation' : 'Accompagnement complet'}
                     </p>
                     <div className="mt-4 flex items-center justify-between">
                       <div className="flex -space-x-2">

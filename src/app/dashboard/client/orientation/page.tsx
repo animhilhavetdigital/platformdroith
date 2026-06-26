@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { ArrowRight, MessageSquare, Scale, Sparkles, UserCheck } from 'lucide-react';
+import { ArrowRight, MessageSquare, Sparkles, UserCheck } from 'lucide-react';
 import PreviewScenarioNav from '@/components/client/PreviewScenarioNav';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import {
@@ -45,7 +45,7 @@ export default async function ClientOrientationPage({ searchParams }: Props) {
   }
 
   const options: Array<{
-    id: 'autonomie' | 'mediation' | 'avocat';
+    id: 'autonomie' | 'mediation';
     icon: React.ReactNode;
     title: string;
     desc: string;
@@ -67,14 +67,6 @@ export default async function ClientOrientationPage({ searchParams }: Props) {
       desc: 'Droit Habitat prend le relais pour une conciliation amiable.',
       highlight: true,
       previewScenario: 'mediation',
-    },
-    {
-      id: 'avocat',
-      icon: <Scale size={28} />,
-      title: 'Relais avocat',
-      desc: 'Transmission structuree a un avocat partenaire.',
-      highlight: false,
-      previewScenario: 'avocat',
     },
   ];
 

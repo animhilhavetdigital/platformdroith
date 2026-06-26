@@ -9,7 +9,7 @@ import {
 import { devStore } from '@/lib/dev-store';
 import { createServerSupabaseClient } from '@/lib/supabase';
 import { getStatusColor, getStatusLabel } from '@/lib/utils';
-import { CheckCircle, Clock, FileText, Upload, Shield, ArrowRight, Star, AlertCircle, FileCheck } from 'lucide-react';
+import { CheckCircle, Clock, FileText, Shield, ArrowRight, Star, AlertCircle, FileCheck } from 'lucide-react';
 import Link from 'next/link';
 import ProgressionMediation from '@/components/ProgressionMediation';
 
@@ -45,14 +45,13 @@ export default async function ClientDashboard({ searchParams }: Props) {
 
   const isMediation = dossier?.offre === '2' || dossier?.offre === '3';
   const showOrientation = ['livre', 'rapport_genere', 'orientation_en_cours'].includes(dossier?.statut);
-  const showFeedback = ['autonomie', 'mediation_terminee', 'avocat', 'cloture', 'feedback'].includes(dossier?.statut);
+  const showFeedback = ['autonomie', 'mediation_terminee', 'cloture', 'feedback'].includes(dossier?.statut);
 
   const steps = [
-    { label: 'Formulaire', done: !!dossier?.date_formulaire_complete, current: dossier?.statut === 'formulaire_en_cours' || dossier?.statut === 'nouveau' || dossier?.statut === 'onboarding' },
-    { label: 'Documents', done: !!dossier?.date_upload_complete, current: dossier?.statut === 'pieces_attendues' },
+    { label: 'Formulaire & Documents', done: !!dossier?.date_upload_complete, current: dossier?.statut === 'formulaire_en_cours' || dossier?.statut === 'nouveau' || dossier?.statut === 'onboarding' || dossier?.statut === 'pieces_attendues' },
     { label: 'Analyse', done: !!dossier?.date_livraison || dossier?.statut === 'rapport_genere', current: dossier?.statut === 'analyse_en_cours' },
     { label: 'Rapport', done: dossier?.statut === 'livre' || dossier?.statut === 'orientation_en_cours' || showFeedback, current: dossier?.statut === 'rapport_genere' },
-    ...(isMediation ? [{ label: 'Médiation', done: dossier?.statut === 'mediation_terminee' || dossier?.statut === 'cloture', current: dossier?.statut === 'mediation_en_cours' }] : []),
+    ...(isMediation ? [{ label: 'Négociateur', done: dossier?.statut === 'mediation_terminee' || dossier?.statut === 'cloture', current: dossier?.statut === 'mediation_en_cours' }] : []),
     ...(showFeedback ? [{ label: 'Clôture', done: dossier?.statut === 'cloture', current: dossier?.statut === 'feedback' }] : []),
   ];
 
@@ -170,7 +169,7 @@ export default async function ClientDashboard({ searchParams }: Props) {
                   <h2 className="text-sm font-bold uppercase tracking-wider text-gray-400">Offre souscrite</h2>
                 </div>
                 <p className="text-2xl font-extrabold text-gray-900">
-                  {dossier.offre === '1' ? 'Diagnostic' : dossier.offre === '2' ? 'Médiation' : dossier.offre === '3' ? 'Relais Avocat' : 'N/A'}
+                  {dossier.offre === '1' ? 'Diagnostic' : dossier.offre === '2' ? 'Médiation' : dossier.offre === '3' ? 'Accompagnement complet' : 'N/A'}
                 </p>
                 <p className="mt-1 text-sm text-gray-500">
                   {dossier.offre === '1' ? '99 €' : dossier.offre === '2' ? '199 €' : dossier.offre === '3' ? '399 €' : ''}
@@ -198,20 +197,6 @@ export default async function ClientDashboard({ searchParams }: Props) {
                   </Link>
                 )}
 
-                <Link
-                  href={getClientHref('/dashboard/client/documents')}
-                  className="group flex items-center gap-4 rounded-xl border border-gray-100 bg-gray-50 p-5 transition-all hover:border-primary-200 hover:bg-primary-50 hover:shadow-md"
-                >
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-primary-600 transition-colors group-hover:bg-primary-200">
-                    <Upload size={22} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold text-gray-900">Ajouter des documents</p>
-                    <p className="text-sm text-gray-500 truncate">{dossier.documents?.length || 0} document(s) déposés</p>
-                  </div>
-                  <ArrowRight size={18} className="shrink-0 text-gray-300 transition-colors group-hover:text-primary-500" />
-                </Link>
-
                 {dossier.statut === 'analyse_en_cours' && (
                   <Link
                     href={getClientHref('/dashboard/client/analyse')}
@@ -238,7 +223,7 @@ export default async function ClientDashboard({ searchParams }: Props) {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-primary-900">Choisir la suite</p>
-                      <p className="text-sm text-primary-700 truncate">Autonomie, Médiation ou Avocat</p>
+                      <p className="text-sm text-primary-700 truncate">Autonomie ou Médiation</p>
                     </div>
                     <ArrowRight size={18} className="shrink-0 text-primary-400" />
                   </Link>

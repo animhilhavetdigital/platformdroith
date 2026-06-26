@@ -158,14 +158,14 @@ export async function genererRapportFinal(dossierId: string, resultat: 'positif'
     conclusion:
       resultat === 'positif'
         ? 'La médiation a abouti à un accord satisfaisant. Le client peut valider les termes proposés.'
-        : 'La médiation n\'a pas abouti. Le dossier est transmis à un avocat partenaire pour la suite contentieuse.',
+        : 'La médiation n\'a pas abouti à un accord amiable. Le rapport final reprend l\'ensemble des éléments et les pistes restantes.',
     recommandations_suivantes:
       resultat === 'positif'
         ? ['Valider l\'accord par écrit.', 'Conserver une copie de la transaction.', 'Clôturer le dossier.']
-        : ['Contacter l\'avocat partenaire.', 'Préparer les pièces pour la procédure contentieuse.', 'Suivre les recommandations de l\'avocat.'],
+        : ['Consulter le rapport final.', 'Évaluer les suites possibles avec votre conseiller.', 'Conserver l\'ensemble des pièces du dossier.'],
   };
 
-  const newStatut = resultat === 'positif' ? 'mediation_terminee' : 'avocat';
+  const newStatut = resultat === 'positif' ? 'mediation_terminee' : 'cloture';
 
   const { error: updateError } = await supabase
     .from('dossiers')

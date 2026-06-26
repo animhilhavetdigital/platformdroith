@@ -44,8 +44,10 @@ export interface Profile {
   role: UserRole;
   nom: string;
   prenom: string;
+  email?: string;
   téléphone?: string;
   avatar_url?: string;
+  status?: string;
   created_at: string;
   updated_at: string;
 }

@@ -78,7 +78,7 @@ export default async function ClientDossierPage() {
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Offre</p>
                   <p className="mt-1 text-sm font-bold text-gray-900">
-                    {dossier.offre === '1' ? 'Diagnostic' : dossier.offre === '2' ? 'Médiation' : dossier.offre === '3' ? 'Relais Avocat' : 'N/A'}
+                    {dossier.offre === '1' ? 'Diagnostic' : dossier.offre === '2' ? 'Médiation' : dossier.offre === '3' ? 'Accompagnement complet' : 'N/A'}
                   </p>
                 </div>
                 <div>

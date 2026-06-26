@@ -57,8 +57,8 @@ export default async function AdminDossierDetailPage({ params }: Props) {
         match.statut = status as any;
         match.negotiator_id = negotiatorId || null;
       }
-      revalidatePath(`/dashboard/super-admin/dossiers/${params.id}`);
-      redirect(`/dashboard/super-admin/dossiers/${params.id}?success=Dossier mis a jour`);
+      revalidatePath(`/dashboard/admin/dossiers/${params.id}`);
+      redirect(`/dashboard/admin/dossiers/${params.id}?success=Dossier mis a jour`);
     } else {
       const supabase = createServerSupabaseClient();
       await supabase
@@ -69,7 +69,7 @@ export default async function AdminDossierDetailPage({ params }: Props) {
         })
         .eq('id', params.id);
       
-      revalidatePath(`/dashboard/super-admin/dossiers/${params.id}`);
+      revalidatePath(`/dashboard/admin/dossiers/${params.id}`);
     }
   }
 
@@ -86,7 +86,7 @@ export default async function AdminDossierDetailPage({ params }: Props) {
       <div className="space-y-8 py-4 max-w-5xl mx-auto">
         <div className="flex items-center gap-3">
           <Link
-            href="/dashboard/super-admin/dossiers"
+            href="/dashboard/admin/dossiers"
             className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 transition-colors"
           >
             <ArrowLeft size={16} />
@@ -112,7 +112,7 @@ export default async function AdminDossierDetailPage({ params }: Props) {
                   <div>
                     <span className="block text-xs font-semibold text-gray-400 uppercase">Offre</span>
                     <span className="text-sm font-bold text-gray-900">
-                      {dossier.offre === '1' ? 'Diagnostic (99 €)' : dossier.offre === '2' ? 'Médiation (199 €)' : dossier.offre === '3' ? 'Relais Avocat (399 €)' : 'N/A'}
+                      {dossier.offre === '1' ? 'Diagnostic (99 €)' : dossier.offre === '2' ? 'Médiation (199 €)' : dossier.offre === '3' ? 'Accompagnement complet (399 €)' : 'N/A'}
                     </span>
                   </div>
                   <div>

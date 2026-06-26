@@ -7,7 +7,6 @@ import { UserRole } from './types';
 const ROLE_ROUTES: Record<string, UserRole[]> = {
   '/dashboard/super-admin': ['super_admin'],
   '/dashboard/admin': ['super_admin'],
-  '/dashboard/negociateur': ['super_admin', 'negotiator'],
   '/dashboard/negotiator': ['super_admin', 'negotiator'],
   '/dashboard/client': ['super_admin', 'client', 'negotiator'],
 };
@@ -65,9 +64,9 @@ export async function middleware(request: NextRequest) {
 function getDefaultDashboard(role: UserRole): string {
   switch (role) {
     case 'super_admin':
-      return '/dashboard/super-admin';
+      return '/dashboard/admin';
     case 'negotiator':
-      return '/dashboard/negociateur';
+      return '/dashboard/negotiator';
     case 'client':
       return '/dashboard/client';
     default:

@@ -67,8 +67,8 @@ export default async function AdminCreateClientPage() {
         created_at: new Date().toISOString(),
       });
 
-      revalidatePath('/dashboard/super-admin/clients');
-      redirect('/dashboard/super-admin/clients?message=Client cree avec succes');
+      revalidatePath('/dashboard/admin/clients');
+      redirect('/dashboard/admin/clients?message=Client cree avec succes');
     } else {
       const supabase = createServerSupabaseClient();
       
@@ -90,8 +90,8 @@ export default async function AdminCreateClientPage() {
           statut: 'formulaire_en_cours'
         });
       }
-      revalidatePath('/dashboard/super-admin/clients');
-      redirect('/dashboard/super-admin/clients');
+      revalidatePath('/dashboard/admin/clients');
+      redirect('/dashboard/admin/clients');
     }
   }
 
@@ -100,7 +100,7 @@ export default async function AdminCreateClientPage() {
       <div className="max-w-2xl mx-auto space-y-8">
         <div className="flex items-center gap-3">
           <Link
-            href="/dashboard/super-admin/clients"
+            href="/dashboard/admin/clients"
             className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 transition-colors"
           >
             <ArrowLeft size={16} />
@@ -178,7 +178,7 @@ export default async function AdminCreateClientPage() {
               >
                 <option value="1">Offre 1 : Diagnostic (99 €)</option>
                 <option value="2">Offre 2 : Médiation (199 €)</option>
-                <option value="3">Offre 3 : Relais Avocat (399 €)</option>
+
               </select>
             </div>
 

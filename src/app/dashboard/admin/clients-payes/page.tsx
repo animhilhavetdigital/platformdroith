@@ -86,8 +86,8 @@ export default async function AdminClientsPayesPage() {
         payment.user_id = newClientId;
         payment.dossier_id = newDossierId;
       }
-      revalidatePath('/dashboard/super-admin/clients-payes');
-      redirect('/dashboard/super-admin/clients-payes?success=Compte cree avec succes');
+      revalidatePath('/dashboard/admin/clients-payes');
+      redirect('/dashboard/admin/clients-payes?success=Compte cree avec succes');
     } else {
       const supabase = createServerSupabaseClient();
       // Fetch payment details
@@ -128,7 +128,7 @@ export default async function AdminClientsPayesPage() {
             .eq('id', paymentId);
         }
       }
-      revalidatePath('/dashboard/super-admin/clients-payes');
+      revalidatePath('/dashboard/admin/clients-payes');
     }
   }
 
@@ -162,7 +162,7 @@ export default async function AdminClientsPayesPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm font-semibold text-gray-700">
-                    {client.offer_type === '1' ? 'Diagnostic' : client.offer_type === '2' ? 'Médiation' : client.offer_type === '3' ? 'Relais Avocat' : 'N/A'}
+                    {client.offer_type === '1' ? 'Diagnostic' : client.offer_type === '2' ? 'Médiation' : client.offer_type === '3' ? 'Accompagnement complet' : 'N/A'}
                   </td>
                   <td className="px-6 py-4 text-sm font-bold text-gray-900">{client.amount} €</td>
                   <td className="px-6 py-4 text-sm text-gray-400">

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { ArrowRight, Download, FileText, Shield, Sparkles, Scale, UserCheck, CheckCircle, AlertCircle } from 'lucide-react';
+import { Download, FileText, Shield, Sparkles, Scale, UserCheck, CheckCircle } from 'lucide-react';
 import PreviewScenarioNav from '@/components/client/PreviewScenarioNav';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import {
@@ -10,7 +10,8 @@ import {
 } from '@/lib/dev-access';
 import { createServerSupabaseClient } from '@/lib/supabase';
 import { formatDate } from '@/lib/utils';
-import { choisirAutonomie, choisirNegociateur } from './actions';
+import { choisirAutonomie } from './actions';
+import PaymentTrigger from './PaymentTrigger';
 
 interface Props {
   searchParams?: { scenario?: string };
@@ -55,9 +56,8 @@ export default async function ClientRapportPage({ searchParams }: Props) {
   const hasInitialReport = dossier?.rapport_url || irregularities.length > 0;
   const isMediationActive = dossier?.statut === 'mediation_en_cours';
   const isMediationDone = dossier?.statut === 'mediation_terminee';
-  const isAvocat = dossier?.statut === 'avocat';
   const isAutonomie = dossier?.statut === 'autonomie';
-  const showNegotiatorOption = hasInitialReport && !isMediationActive && !isMediationDone && !isAvocat && !isAutonomie;
+  const showNegotiatorOption = hasInitialReport && !isMediationActive && !isMediationDone && !isAutonomie;
 
   return (
     <DashboardLayout allowedRoles={['client']}>
@@ -179,20 +179,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
                   Un négociateur Droit Habitat peut prendre le relais pour une conciliation amiable avec votre organisme de crédit.
                 </p>
                 <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                  <form
-                    action={async () => {
-                      'use server';
-                      await choisirNegociateur(dossier.id);
-                    }}
-                  >
-                    <button
-                      type="submit"
-                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-5 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary-600/20 transition-all hover:bg-primary-700 hover:scale-[1.02]"
-                    >
-                      <Scale size={18} />
-                      Payer 199 € — Négociateur
-                    </button>
-                  </form>
+                  <PaymentTrigger dossierId={dossier.id} />
 
                   <form
                     action={async () => {
@@ -235,27 +222,6 @@ export default async function ClientRapportPage({ searchParams }: Props) {
                     <p className="text-sm text-success-800">
                       Votre négociateur a finalisé le dossier. Le rapport final est disponible ci-dessus.
                     </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {isAvocat && (
-              <div className="rounded-2xl border border-purple-100 bg-purple-50 p-6 shadow-sm">
-                <div className="flex items-center gap-3">
-                  <AlertCircle size={20} className="text-purple-600" />
-                  <div>
-                    <h3 className="text-lg font-bold text-purple-900">Relais avocat</h3>
-                    <p className="text-sm text-purple-800">
-                      La médiation n&apos;a pas abouti. Votre dossier a été transmis à un avocat partenaire pour la suite contentieuse.
-                    </p>
-                    <Link
-                      href="/dashboard/client/avocat"
-                      className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-purple-700 hover:underline"
-                    >
-                      Voir les détails
-                      <ArrowRight size={14} />
-                    </Link>
                   </div>
                 </div>
               </div>

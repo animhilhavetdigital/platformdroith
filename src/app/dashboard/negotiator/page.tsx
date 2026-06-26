@@ -124,7 +124,7 @@ export default async function NegotiatorDashboard({ searchParams }: Props) {
                         {(dossier.client as any)?.prenom} {(dossier.client as any)?.nom}
                       </p>
                       <p className="font-mono text-sm text-gray-400">
-                        {dossier.reference} - Offre {dossier.offre === '2' ? 'Mediation' : dossier.offre === '3' ? 'Relais avocat' : 'Diagnostic'}
+                        {dossier.reference} - Offre {dossier.offre === '2' ? 'Mediation' : dossier.offre === '3' ? 'Accompagnement complet' : 'Diagnostic'}
                       </p>
                     </div>
                   </div>

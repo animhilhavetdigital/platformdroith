@@ -44,7 +44,7 @@ export default async function NegotiatorParametresPage() {
         negotiator.nom = nom;
         negotiator.téléphone = telephone;
       }
-      revalidatePath('/dashboard/negociateur/parametres');
+      revalidatePath('/dashboard/negotiator/parametres');
     } else {
       const supabase = createServerSupabaseClient();
       const { data: { session } } = await supabase.auth.getSession();
@@ -54,7 +54,7 @@ export default async function NegotiatorParametresPage() {
           .from('profiles')
           .update({ prenom, nom, telephone })
           .eq('id', session.user.id);
-        revalidatePath('/dashboard/negociateur/parametres');
+        revalidatePath('/dashboard/negotiator/parametres');
       }
     }
   }

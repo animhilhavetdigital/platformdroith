@@ -108,12 +108,12 @@ export default async function NegotiatorDossierDetail({ params, searchParams }: 
                 {getStatusLabel(dossier.statut)}
               </span>
             </div>
-            <p className="text-sm text-gray-500">Mediation - Offre 2</p>
+            <p className="text-sm text-gray-500">{dossier.offre === '2' ? 'Médiation' : dossier.offre === '3' ? 'Accompagnement complet' : 'Diagnostic'} - Offre {dossier.offre || 'N/A'}</p>
           </div>
           {dossier.statut === 'mediation_en_cours' && (
             <div className="flex items-center gap-3">
               <Link
-                href={isPreview ? buildPreviewHref(`/dashboard/negotiator/rapport/${params.id}`, previewScenario) : `/dashboard/negociateur/rapport/${params.id}`}
+                href={isPreview ? buildPreviewHref(`/dashboard/negotiator/rapport/${params.id}`, previewScenario) : `/dashboard/negotiator/rapport/${params.id}`}
                 className="flex items-center gap-2 rounded-xl bg-primary-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary-600/20"
               >
                 <FileText size={16} />
@@ -144,7 +144,7 @@ export default async function NegotiatorDossierDetail({ params, searchParams }: 
                   className="flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-red-600/20"
                 >
                   <XCircle size={16} />
-                  Négatif — Relais avocat
+                  Négatif — Clôturer
                 </button>
               </form>
             </div>

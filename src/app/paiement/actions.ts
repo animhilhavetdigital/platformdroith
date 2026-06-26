@@ -73,7 +73,7 @@ export async function processInitialPayment(formData: FormData) {
     }
 
     const serverClient = createServerSupabaseClient();
-    const prix = offreId === '1' ? 99 : offreId === '3' ? 399 : 199;
+    const prix = offreId === '1' ? 99 : 199;
     const reference = generateReference();
 
     const { error: dossierError } = await serverClient.from('dossiers').insert({
