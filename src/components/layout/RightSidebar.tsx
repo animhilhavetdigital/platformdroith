@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { UserRole } from '@/types';
 import {
   AlertCircle,
@@ -88,23 +88,52 @@ const roleData: Record<
 };
 
 export default function RightSidebar({ role = 'client' }: RightSidebarProps) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const data = roleData[role] || roleData.client;
 
+  useEffect(() => {
+    const handleToggle = () => setOpen((prev) => !prev);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+    window.addEventListener('toggle-notifications', handleToggle);
+    window.addEventListener('open-notifications', handleOpen);
+    window.addEventListener('close-notifications', handleClose);
+
+    return () => {
+      window.removeEventListener('toggle-notifications', handleToggle);
+      window.removeEventListener('open-notifications', handleOpen);
+      window.removeEventListener('close-notifications', handleClose);
+    };
+  }, []);
+
+  useEffect(() => {
+    const sendCount = () => {
+      window.dispatchEvent(
+        new CustomEvent('update-notification-count', { detail: data.notifications.length })
+      );
+    };
+
+    sendCount();
+
+    window.addEventListener('request-notification-count', sendCount);
+    return () => {
+      window.removeEventListener('request-notification-count', sendCount);
+    };
+  }, [data.notifications.length]);
+
   if (!open) {
-    return (
-      <button
-        onClick={() => setOpen(true)}
-        className="fixed right-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-white text-gray-600 shadow-lg lg:static lg:mr-4 lg:hidden"
-        aria-label="Ouvrir notifications"
-      >
-        <Bell size={18} />
-      </button>
-    );
+    return null;
   }
 
   return (
-    <aside className="hidden w-72 flex-col border-l border-gray-100 bg-white lg:flex">
+    <>
+      {/* Backdrop for mobile/tablet */}
+      <div
+        className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm lg:hidden transition-opacity"
+        onClick={() => setOpen(false)}
+      />
+      <aside className="fixed inset-y-0 right-0 z-50 flex w-72 flex-col border-l border-gray-100 bg-white shadow-xl lg:static lg:z-auto lg:shadow-none lg:flex">
       <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
         <div className="flex items-center gap-2">
           <Bell size={16} className="text-gray-700" />
@@ -182,5 +211,6 @@ export default function RightSidebar({ role = 'client' }: RightSidebarProps) {
         </section>
       </div>
     </aside>
+    </>
   );
 }

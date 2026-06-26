@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { Search, Bell, Settings, User, Menu } from 'lucide-react';
 import Link from 'next/link';
@@ -26,6 +27,27 @@ const segmentLabels: Record<string, string> = {
 
 export default function DashboardHeader() {
   const pathname = usePathname();
+  const [notificationCount, setNotificationCount] = useState(0);
+
+  useEffect(() => {
+    const handleUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<number>;
+      setNotificationCount(customEvent.detail);
+    };
+
+    window.addEventListener('update-notification-count', handleUpdate);
+    
+    // Request initial count
+    window.dispatchEvent(new CustomEvent('request-notification-count'));
+
+    return () => {
+      window.removeEventListener('update-notification-count', handleUpdate);
+    };
+  }, []);
+
+  const handleToggleNotifications = () => {
+    window.dispatchEvent(new CustomEvent('toggle-notifications'));
+  };
   
   const segments = pathname.split('/').filter(Boolean);
   const breadcrumbs = segments.map((seg, idx) => {
@@ -58,8 +80,17 @@ export default function DashboardHeader() {
 
         {/* Right Icon/Profile */}
         <div className="flex items-center gap-1">
-          <button className="p-2 text-slate-500 hover:bg-slate-100 rounded-xl transition-colors" aria-label="Notifications">
+          <button
+            onClick={handleToggleNotifications}
+            className="relative p-2 text-slate-500 hover:bg-slate-100 rounded-xl transition-colors"
+            aria-label="Notifications"
+          >
             <Bell size={18} />
+            {notificationCount > 0 && (
+              <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white ring-2 ring-white">
+                {notificationCount}
+              </span>
+            )}
           </button>
           <button className="p-2 text-slate-500 hover:bg-slate-100 rounded-xl transition-colors" aria-label="Settings">
             <Settings size={18} />
@@ -121,8 +152,17 @@ export default function DashboardHeader() {
             <Settings size={14} />
           </button>
 
-          <button className="text-slate-400 hover:text-slate-600 transition-colors" aria-label="Notifications">
-            <Bell size={14} />
+          <button
+            onClick={handleToggleNotifications}
+            className="relative p-1.5 text-slate-400 hover:text-slate-600 transition-colors"
+            aria-label="Notifications"
+          >
+            <Bell size={16} />
+            {notificationCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white ring-2 ring-white">
+                {notificationCount}
+              </span>
+            )}
           </button>
         </div>
       </div>

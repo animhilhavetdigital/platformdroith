@@ -1,6 +1,7 @@
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import { isDevAccessEnabled, getPreviewClientData, buildPreviewHref } from '@/lib/dev-access';
+import { isDevAccessEnabled, getPreviewClientData, buildPreviewHref, buildPreviewMediationEtapes } from '@/lib/dev-access';
 import { devStore } from '@/lib/dev-store';
+import { initMediationEtapes } from '@/app/dashboard/negotiator/dossiers/[id]/actions';
 import { createServerSupabaseClient } from '@/lib/supabase';
 import { Download, Handshake, ShieldCheck, Sparkles, CheckCircle, FileText } from 'lucide-react';
 import Link from 'next/link';
@@ -74,7 +75,40 @@ export default async function ClientNegociateurPage({ searchParams }: Props) {
   const isDone = ['mediation_terminee', 'negociation_terminee', 'resultat_positif', 'resultat_negatif', 'cloture'].includes(dossier?.statut);
   const isAutonomie = dossier?.statut === 'autonomie';
 
-  const mediationEtapes = dossier?.mediation_etapes || [];
+  let mediationEtapes: any[] = [];
+  if (dossier) {
+    if (isPreview) {
+      const liveEtapes = devStore.mediationEtapes[dossier.id];
+      if (liveEtapes && liveEtapes.length > 0) {
+        mediationEtapes = [...liveEtapes].sort((a: any, b: any) => a.ordre - b.ordre);
+      } else {
+        const defaultData = getPreviewClientData(previewScenario).dossier;
+        let defaultEtapes: any[] = [];
+        if (defaultData && defaultData.id === dossier.id && defaultData.mediation_etapes) {
+          defaultEtapes = defaultData.mediation_etapes;
+        } else {
+          defaultEtapes = buildPreviewMediationEtapes(dossier.id, 2);
+        }
+        devStore.mediationEtapes[dossier.id] = defaultEtapes;
+        mediationEtapes = [...defaultEtapes].sort((a: any, b: any) => a.ordre - b.ordre);
+      }
+    } else {
+      const dbEtapes = dossier.mediation_etapes || [];
+      if (isActive && dbEtapes.length === 0) {
+        await initMediationEtapes(dossier.id);
+        const supabase = createServerSupabaseClient();
+        const { data: refreshed } = await supabase
+          .from('mediation_etapes')
+          .select('*')
+          .eq('dossier_id', dossier.id)
+          .order('ordre', { ascending: true });
+        mediationEtapes = refreshed || [];
+      } else {
+        mediationEtapes = [...dbEtapes].sort((a: any, b: any) => a.ordre - b.ordre);
+      }
+    }
+  }
+
   const completedSteps = mediationEtapes.filter((e: any) => e.complete).length;
   const totalSteps = mediationEtapes.length || 5;
 

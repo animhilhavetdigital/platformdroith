@@ -993,7 +993,7 @@ function cloneDocumentsForDossier(dossierId: string, count = 3): Document[] {
   }));
 }
 
-function buildPreviewMediationEtapes(
+export function buildPreviewMediationEtapes(
   dossierId: string,
   completedCount = 2
 ): MediationEtape[] {
