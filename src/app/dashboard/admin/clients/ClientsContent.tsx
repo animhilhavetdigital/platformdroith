@@ -15,6 +15,7 @@ import {
   Lock,
   Trash2,
   AlertTriangle,
+  ChevronDown,
 } from 'lucide-react';
 
 
@@ -32,6 +33,14 @@ export default function ClientsContent({ rows }: Props) {
   const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedClient, setSelectedClient] = useState<UnifiedClientRow | null>(null);
+  const [expandedMobile, setExpandedMobile] = useState<Set<string>>(new Set());
+
+  const toggleMobileExpand = (id: string) => {
+    const next = new Set(expandedMobile);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setExpandedMobile(next);
+  };
 
   const filtered = useMemo(() => {
     if (!search.trim()) return rows;
@@ -71,7 +80,8 @@ export default function ClientsContent({ rows }: Props) {
         />
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
+      {/* Desktop table */}
+      <div className="hidden sm:block overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm shadow-black/10">
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
@@ -170,6 +180,107 @@ export default function ClientsContent({ rows }: Props) {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="sm:hidden space-y-3">
+        {filtered.map((row) => {
+          const isExpanded = expandedMobile.has(row.id);
+          const statusBadge =
+            row.status === 'pending' ? (
+              <span className="inline-flex rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700 border border-amber-100">
+                En attente
+              </span>
+            ) : row.status === 'added' ? (
+              <span className="inline-flex rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-blue-700 border border-blue-100">
+                Ajouté
+              </span>
+            ) : (
+              <span className="inline-flex rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-green-700 border border-green-100">
+                Actif
+              </span>
+            );
+          return (
+            <div key={`${row.type}-${row.id}`} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm shadow-black/10">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => toggleMobileExpand(row.id)}
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-500 text-white transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                >
+                  <ChevronDown size={16} />
+                </button>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold text-gray-900 truncate">
+                    {row.prenom} {row.nom}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">ID : {row.id.slice(0, 8)}…</p>
+                </div>
+                {statusBadge}
+              </div>
+
+              {isExpanded && (
+                <div className="mt-4 space-y-3 border-t border-gray-100 pt-3">
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div>
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Email</span>
+                      <div className="mt-1 flex items-center gap-1.5">
+                        <Mail size={12} className="text-gray-400" />
+                        <span className="truncate font-medium text-gray-600">{row.email}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Téléphone</span>
+                      <div className="mt-1 flex items-center gap-1.5">
+                        <Phone size={12} className="text-gray-400" />
+                        <span className="font-medium text-gray-600">{row.phone}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Offre</span>
+                      <span className="mt-1 block font-semibold text-gray-700">{offerLabel(row.offer)}</span>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Montant</span>
+                      <span className="mt-1 block font-bold text-gray-900">{row.amount.toFixed(2)} €</span>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Date</span>
+                      <span className="mt-1 block font-medium text-gray-600">{new Date(row.date).toLocaleDateString('fr-FR')}</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-1">
+                    {row.type === 'pending' ? (
+                      <form action={addClientFromPayment.bind(null, row.id)}>
+                        <button
+                          type="submit"
+                          className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-primary-600 px-4 py-2 text-xs font-bold text-white shadow-sm transition-colors hover:bg-primary-700"
+                        >
+                          <UserPlus size={14} />
+                          Ajouter à la plateforme
+                        </button>
+                      </form>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedClient(row)}
+                        className="flex w-full items-center justify-center gap-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
+                      >
+                        Détails
+                        <ArrowRight size={12} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+        {filtered.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
+            Aucun client trouvé.
+          </div>
+        )}
       </div>
 
       {selectedClient && (

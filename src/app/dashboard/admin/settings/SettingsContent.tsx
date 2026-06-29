@@ -41,7 +41,7 @@ export default function SettingsContent({ data }: SettingsContentProps) {
   return (
     <>
       {/* Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-700 to-primary-900 p-6 pb-20 shadow-lg sm:p-8 sm:pb-24">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-700 to-primary-900 p-6 pb-20 shadow-sm shadow-black/10 sm:p-8 sm:pb-24">
         <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-white/5" />
         <div className="absolute -bottom-16 -left-10 h-56 w-56 rounded-full bg-white/5" />
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-white/5 [mask-image:linear-gradient(to_top,white,transparent)]" />
@@ -54,7 +54,7 @@ export default function SettingsContent({ data }: SettingsContentProps) {
 
       {/* Profile card */}
       <div className="relative -mt-14 px-4 sm:-mt-16 sm:px-6">
-        <div className="mx-auto max-w-5xl rounded-2xl border border-gray-100 bg-white p-5 shadow-lg shadow-gray-100/50 sm:p-6">
+        <div className="mx-auto max-w-5xl rounded-2xl border border-gray-100 bg-white p-5 shadow-sm shadow-black/10 sm:p-6">
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center">
               <div className="relative">
@@ -90,7 +90,7 @@ export default function SettingsContent({ data }: SettingsContentProps) {
         <>
           <div className="grid gap-6 lg:grid-cols-3">
             {/* Platform Settings */}
-            <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm shadow-black/10">
               <h3 className="text-lg font-bold text-gray-900">Platform Settings</h3>
               <p className="text-xs text-gray-400">Parametres operationnels</p>
 
@@ -145,7 +145,7 @@ export default function SettingsContent({ data }: SettingsContentProps) {
             </div>
 
             {/* Platform Info */}
-            <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm shadow-black/10">
               <h3 className="text-lg font-bold text-gray-900">Informations</h3>
               <p className="text-xs text-gray-400">Details de la plateforme</p>
 
@@ -172,7 +172,7 @@ export default function SettingsContent({ data }: SettingsContentProps) {
             </div>
 
             {/* Team */}
-            <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm shadow-black/10">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-bold text-gray-900">Equipe</h3>
@@ -237,7 +237,7 @@ export default function SettingsContent({ data }: SettingsContentProps) {
                 return (
                   <div
                     key={dossier.id}
-                    className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+                    className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm shadow-black/10 transition-all hover:-translate-y-0.5 hover:shadow-md"
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-xs font-bold text-gray-500">{dossier.reference}</span>
@@ -278,7 +278,7 @@ export default function SettingsContent({ data }: SettingsContentProps) {
       )}
 
       {activeTab === 'equipe' && (
-        <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center shadow-sm">
+        <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center shadow-sm shadow-black/10">
           <Users size={40} className="mx-auto text-gray-300" />
           <h3 className="mt-4 text-lg font-bold text-gray-900">Equipe</h3>
           <p className="text-sm text-gray-500">Gestion avancee de l&apos;equipe disponible prochainement.</p>
@@ -286,7 +286,7 @@ export default function SettingsContent({ data }: SettingsContentProps) {
       )}
 
       {activeTab === 'projets' && (
-        <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center shadow-sm">
+        <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center shadow-sm shadow-black/10">
           <Shield size={40} className="mx-auto text-gray-300" />
           <h3 className="mt-4 text-lg font-bold text-gray-900">Projets</h3>
           <p className="text-sm text-gray-500">Vue projets disponible prochainement.</p>

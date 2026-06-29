@@ -89,7 +89,7 @@ export default async function AdminDashboard({ searchParams }: Props) {
         {isPreview && previewStats && (
           <div className="grid gap-6 lg:grid-cols-2">
             {/* Repartition des statuts */}
-            <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm shadow-slate-100/50">
+            <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm shadow-black/10">
               <h3 className="text-sm font-bold text-slate-800">Répartition des statuts</h3>
               <div className="mt-5 space-y-4">
                 {previewStats.statusBreakdown.map((entry: any) => (
@@ -110,7 +110,7 @@ export default async function AdminDashboard({ searchParams }: Props) {
             </div>
 
             {/* Volume mensuel */}
-            <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm shadow-slate-100/50">
+            <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm shadow-black/10">
               <h3 className="text-sm font-bold text-slate-800">Volume mensuel</h3>
               <div className="mt-5 flex h-48 items-end gap-3 px-2">
                 {previewStats.monthlyVolumes.map((value: number, index: number) => (
@@ -130,7 +130,7 @@ export default async function AdminDashboard({ searchParams }: Props) {
         )}
 
         {/* Recent dossiers table */}
-        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm shadow-slate-100/50 overflow-hidden">
+        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm shadow-black/10 overflow-hidden">
           <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
             <h3 className="text-sm font-bold text-slate-800">Dossiers récents</h3>
             <a href="/dashboard/admin/dossiers" className="group flex items-center gap-1 text-xs font-bold text-primary-500 hover:text-primary-600">
@@ -192,7 +192,7 @@ export default async function AdminDashboard({ searchParams }: Props) {
 
 function StatCard({ title, value, icon, trend }: { title: string; value: number | string; icon: React.ReactNode; trend?: { value: string; isPositive: boolean } }) {
   return (
-    <div className="rounded-2xl border border-primary-100 bg-gradient-to-br from-primary-50 to-white p-6 shadow-sm shadow-primary-100/30 transition-all hover:-translate-y-0.5 hover:shadow-md">
+    <div className="rounded-2xl border border-primary-100 bg-gradient-to-br from-primary-50 to-white p-6 shadow-sm shadow-black/10 transition-all hover:-translate-y-0.5 hover:shadow-md hover:shadow-black/15">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{title}</p>
@@ -215,7 +215,7 @@ function StatCard({ title, value, icon, trend }: { title: string; value: number 
 
 function MetricCard({ title, value, trend }: { title: string; value: string; trend?: { value: string; isPositive: boolean } }) {
   return (
-    <div className="rounded-2xl border border-primary-100 bg-gradient-to-br from-primary-50 to-white p-5 shadow-sm shadow-primary-100/30">
+    <div className="rounded-2xl border border-primary-100 bg-gradient-to-br from-primary-50 to-white p-5 shadow-sm shadow-black/10">
       <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{title}</p>
       <div className="mt-3 flex items-baseline gap-2">
         <span className="text-lg font-bold text-slate-800">{value}</span>

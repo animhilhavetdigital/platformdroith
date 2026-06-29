@@ -15,6 +15,7 @@ import {
   User,
   Send,
   FileText,
+  ChevronDown,
 } from 'lucide-react';
 
 interface DossiersContentProps {
@@ -30,6 +31,14 @@ export default function DossiersContent({ dossiers: allDossiers, scenario }: Dos
   const [selectedDossier, setSelectedDossier] = useState<Dossier | null>(null);
   const [messageText, setMessageText] = useState('');
   const [isPending, startTransition] = useTransition();
+  const [expandedMobile, setExpandedMobile] = useState<Set<string>>(new Set());
+
+  const toggleMobileExpand = (id: string) => {
+    const next = new Set(expandedMobile);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setExpandedMobile(next);
+  };
 
   const statuses = useMemo(() => {
     const set = new Set<string>();
@@ -114,7 +123,7 @@ export default function DossiersContent({ dossiers: allDossiers, scenario }: Dos
       </div>
 
       {showFilters && (
-        <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+        <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm shadow-black/10">
           <span className="text-xs font-bold text-gray-400">Statut :</span>
           <button
             onClick={() => setStatusFilter('all')}
@@ -138,7 +147,8 @@ export default function DossiersContent({ dossiers: allDossiers, scenario }: Dos
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
+      {/* Desktop table */}
+      <div className="hidden sm:block overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm shadow-black/10">
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
@@ -254,6 +264,104 @@ export default function DossiersContent({ dossiers: allDossiers, scenario }: Dos
         </table>
       </div>
 
+      {/* Mobile cards */}
+      <div className="sm:hidden space-y-3">
+        {filteredDossiers.map((dossier) => {
+          const clientName = `${dossier.client?.prenom || ''} ${dossier.client?.nom || ''}`.trim() || 'Client démo';
+          const initials = `${dossier.client?.prenom?.[0] || ''}${dossier.client?.nom?.[0] || ''}`.toUpperCase() || 'CD';
+          const score = dossier.scoring_confiance ? Math.min(10, Math.max(0, Number(dossier.scoring_confiance))) : null;
+          const isExpanded = expandedMobile.has(dossier.id);
+          return (
+            <div key={dossier.id} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm shadow-black/10">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => toggleMobileExpand(dossier.id)}
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-500 text-white transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                >
+                  <ChevronDown size={16} />
+                </button>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold text-gray-900 truncate">{dossier.reference}</p>
+                  <p className="text-xs text-gray-500 truncate">{clientName}</p>
+                </div>
+                <span className={`inline-flex shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${getStatusColor(dossier.statut)}`}>
+                  {getStatusLabel(dossier.statut)}
+                </span>
+              </div>
+
+              {isExpanded && (
+                <div className="mt-4 space-y-3 border-t border-gray-100 pt-3">
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div>
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Client</span>
+                      <div className="mt-1 flex items-center gap-2">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-[10px] font-bold text-primary-600">
+                          {initials}
+                        </div>
+                        <span className="font-semibold text-gray-700">{clientName}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Offre</span>
+                      <span className="mt-1 block font-semibold text-gray-700">
+                        {dossier.offre === '1' ? 'Diagnostic' : dossier.offre === '2' ? 'Médiation' : 'Accompagnement complet'}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Score</span>
+                      {score ? (
+                        <div className="mt-1">
+                          <span className="font-bold text-gray-700">{score}/10</span>
+                          <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
+                            <div className="h-full rounded-full bg-primary-500" style={{ width: `${score * 10}%` }} />
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="mt-1 block font-bold text-gray-400">-</span>
+                      )}
+                    </div>
+                    <div>
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Contact</span>
+                      <span className="mt-1 block font-medium text-gray-600 truncate">{dossier.client?.email || 'client@droithabitat.fr'}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-1">
+                    <button
+                      onClick={() => setSelectedDossier(dossier)}
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
+                    >
+                      Voir
+                      <ArrowRight size={12} />
+                    </button>
+                    {scenario ? (
+                      <a
+                        href={buildPreviewHref(`/dashboard/negotiator/dossiers/${dossier.id}`, scenario)}
+                        className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+                      >
+                        <MoreHorizontal size={18} />
+                      </a>
+                    ) : (
+                      <button
+                        onClick={() => alert(`Actions pour ${dossier.reference}`)}
+                        className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+                      >
+                        <MoreHorizontal size={18} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+        {filteredDossiers.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
+            Aucun dossier trouvé.
+          </div>
+        )}
+      </div>
+
       {selectedDossier && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-gray-100 bg-white p-6 shadow-xl">
@@ -268,7 +376,7 @@ export default function DossiersContent({ dossiers: allDossiers, scenario }: Dos
             </div>
 
             <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+              <div className="grid grid-cols-2 gap-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm shadow-black/10">
                 <div>
                   <span className="block text-xs font-semibold text-gray-400 uppercase">Référence</span>
                   <span className="text-sm font-bold text-gray-900 font-mono">{selectedDossier.reference}</span>
@@ -299,7 +407,7 @@ export default function DossiersContent({ dossiers: allDossiers, scenario }: Dos
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+              <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm shadow-black/10">
                 <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-gray-900">
                   <User size={16} className="text-gray-400" />
                   Client
@@ -314,7 +422,7 @@ export default function DossiersContent({ dossiers: allDossiers, scenario }: Dos
               </div>
 
               {selectedDossier.negotiator && (
-                <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+                <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm shadow-black/10">
                   <h3 className="mb-3 text-sm font-bold text-gray-900">Négociateur assigné</h3>
                   <div className="space-y-1 text-sm text-gray-600">
                     <p className="font-bold text-gray-900">
@@ -326,7 +434,7 @@ export default function DossiersContent({ dossiers: allDossiers, scenario }: Dos
                 </div>
               )}
 
-              <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+              <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm shadow-black/10">
                 <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-gray-900">
                   <FileText size={16} className="text-gray-400" />
                   Réponses au formulaire
@@ -345,7 +453,7 @@ export default function DossiersContent({ dossiers: allDossiers, scenario }: Dos
                 )}
               </div>
 
-              <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+              <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm shadow-black/10">
                 <h3 className="mb-3 text-sm font-bold text-gray-900">Envoyer un message</h3>
                 <div className="space-y-3">
                   <textarea

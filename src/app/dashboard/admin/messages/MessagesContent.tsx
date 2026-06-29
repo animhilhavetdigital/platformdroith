@@ -37,7 +37,7 @@ export default function MessagesContent({ contacts, messages, activeContactId, a
         <p className="mt-1 text-gray-500">Échangez avec les clients et les négociateurs</p>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm shadow-black/10">
         <div className="flex h-[600px]">
           {/* Contacts sidebar */}
           <div className={cn("w-full border-r border-gray-100 md:w-80 md:block", hasContactParam ? "hidden" : "block")}>

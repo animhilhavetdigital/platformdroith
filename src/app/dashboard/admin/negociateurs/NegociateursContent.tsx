@@ -16,6 +16,7 @@ import {
   Power,
   PowerOff,
   Trash2,
+  ChevronDown,
 } from 'lucide-react';
 
 interface NegotiatorWithCount extends Profile {
@@ -30,6 +31,14 @@ export default function NegociateursContent({ negotiators }: Props) {
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<NegotiatorWithCount | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [expandedMobile, setExpandedMobile] = useState<Set<string>>(new Set());
+
+  const toggleMobileExpand = (id: string) => {
+    const next = new Set(expandedMobile);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setExpandedMobile(next);
+  };
 
   const filtered = useMemo(() => {
     if (!search.trim()) return negotiators;
@@ -69,7 +78,8 @@ export default function NegociateursContent({ negotiators }: Props) {
         />
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
+      {/* Desktop table */}
+      <div className="hidden sm:block overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm shadow-black/10">
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
@@ -152,6 +162,84 @@ export default function NegociateursContent({ negotiators }: Props) {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="sm:hidden space-y-3">
+        {filtered.map((neg) => {
+          const isExpanded = expandedMobile.has(neg.id);
+          const statusBadge = neg.status === 'active' ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-green-700 border border-green-100">
+              <UserCheck size={10} />
+              Actif
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-red-700 border border-red-100">
+              <PowerOff size={10} />
+              Suspendu
+            </span>
+          );
+          return (
+            <div key={neg.id} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm shadow-black/10">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => toggleMobileExpand(neg.id)}
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-500 text-white transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                >
+                  <ChevronDown size={16} />
+                </button>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold text-gray-900 truncate">{neg.prenom} {neg.nom}</p>
+                  <p className="text-xs text-gray-500 truncate">ID : {neg.id.slice(0, 8)}…</p>
+                </div>
+                {statusBadge}
+              </div>
+
+              {isExpanded && (
+                <div className="mt-4 space-y-3 border-t border-gray-100 pt-3">
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div>
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Email</span>
+                      <div className="mt-1 flex items-center gap-1.5">
+                        <Mail size={12} className="text-gray-400" />
+                        <span className="truncate font-medium text-gray-600">{neg.email || '—'}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Téléphone</span>
+                      <div className="mt-1 flex items-center gap-1.5">
+                        <Phone size={12} className="text-gray-400" />
+                        <span className="font-medium text-gray-600">{neg.téléphone || (neg as any).telephone || '—'}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Dossiers</span>
+                      <span className="mt-1 block font-bold text-gray-700">{neg.dossierCount}</span>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Date</span>
+                      <span className="mt-1 block font-medium text-gray-600">{new Date(neg.created_at).toLocaleDateString('fr-FR')}</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-1">
+                    <button
+                      onClick={() => setSelected(neg)}
+                      className="flex w-full items-center justify-center gap-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
+                    >
+                      Détails
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+        {filtered.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
+            Aucun négociateur trouvé.
+          </div>
+        )}
       </div>
 
       {selected && (

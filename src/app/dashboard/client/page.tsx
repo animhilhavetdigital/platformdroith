@@ -130,7 +130,7 @@ export default async function ClientDashboard({ searchParams }: Props) {
         {/* Stats Summary Grid */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {/* Card 1: Total */}
-          <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 shadow-sm flex items-center gap-4">
+          <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 shadow-sm shadow-black/10 flex items-center gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
               <Briefcase size={22} />
             </div>
@@ -141,7 +141,7 @@ export default async function ClientDashboard({ searchParams }: Props) {
           </div>
 
           {/* Card 2: En attente */}
-          <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-white p-6 shadow-sm flex items-center gap-4">
+          <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-white p-6 shadow-sm shadow-black/10 flex items-center gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
               <Clock size={22} />
             </div>
@@ -152,7 +152,7 @@ export default async function ClientDashboard({ searchParams }: Props) {
           </div>
 
           {/* Card 3: Analyse */}
-          <div className="rounded-2xl border border-primary-200 bg-gradient-to-br from-primary-50 to-white p-6 shadow-sm flex items-center gap-4">
+          <div className="rounded-2xl border border-primary-200 bg-gradient-to-br from-primary-50 to-white p-6 shadow-sm shadow-black/10 flex items-center gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-primary-600">
               <Layers size={22} />
             </div>
@@ -163,7 +163,7 @@ export default async function ClientDashboard({ searchParams }: Props) {
           </div>
 
           {/* Card 4: Rapports & Mediation */}
-          <div className="rounded-2xl border border-success-200 bg-gradient-to-br from-success-50 to-white p-6 shadow-sm flex items-center gap-4">
+          <div className="rounded-2xl border border-success-200 bg-gradient-to-br from-success-50 to-white p-6 shadow-sm shadow-black/10 flex items-center gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-success-100 text-success-600">
               <CheckCircle size={22} />
             </div>
@@ -179,7 +179,7 @@ export default async function ClientDashboard({ searchParams }: Props) {
           <h2 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2">Vos dossiers d&apos;expertise</h2>
 
           {dossiers.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-12 text-center shadow-sm">
+            <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-12 text-center shadow-sm shadow-black/10">
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gray-50 text-gray-300 mb-4">
                 <FileText size={28} />
               </div>
@@ -205,7 +205,7 @@ export default async function ClientDashboard({ searchParams }: Props) {
                 return (
                   <div 
                     key={d.id}
-                    className={`relative group rounded-2xl border ${theme.border} ${theme.gradient} p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between`}
+                    className={`relative group rounded-2xl border ${theme.border} ${theme.gradient} p-6 shadow-sm shadow-black/10 hover:shadow-md transition-all flex flex-col justify-between`}
                   >
                     <div className="space-y-4">
                       {/* Top row */}

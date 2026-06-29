@@ -162,7 +162,7 @@ export default async function NegotiatorMessagesPage({ searchParams }: Props) {
           <p className="mt-1 text-gray-500">Échangez avec vos clients et la coordination</p>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm shadow-black/10">
           <div className="flex h-[600px]">
             {/* Contacts sidebar */}
             <div className={cn("w-full border-r border-gray-100 md:w-80 md:block", hasContactParam ? "hidden" : "block")}>

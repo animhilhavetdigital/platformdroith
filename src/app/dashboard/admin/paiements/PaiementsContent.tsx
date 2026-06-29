@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   XCircle,
   Clock,
+  ChevronDown,
 } from 'lucide-react';
 
 interface Payment {
@@ -69,6 +70,14 @@ function paymentStatusBadge(status: string) {
 export default function PaiementsContent({ payments, dossierMap }: Props) {
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<Payment | null>(null);
+  const [expandedMobile, setExpandedMobile] = useState<Set<string>>(new Set());
+
+  const toggleMobileExpand = (id: string) => {
+    const next = new Set(expandedMobile);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setExpandedMobile(next);
+  };
 
   const filtered = useMemo(() => {
     if (!search.trim()) return payments;
@@ -99,7 +108,8 @@ export default function PaiementsContent({ payments, dossierMap }: Props) {
         />
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm">
+      {/* Desktop table */}
+      <div className="hidden sm:block overflow-x-auto rounded-2xl border border-gray-100 bg-white shadow-sm shadow-black/10">
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
@@ -162,6 +172,80 @@ export default function PaiementsContent({ payments, dossierMap }: Props) {
         </table>
       </div>
 
+      {/* Mobile cards */}
+      <div className="sm:hidden space-y-3">
+        {filtered.map((pay) => {
+          const dossier = pay.dossier_id ? dossierMap.get(pay.dossier_id) : undefined;
+          const isExpanded = expandedMobile.has(pay.id);
+          return (
+            <div key={pay.id} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm shadow-black/10">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => toggleMobileExpand(pay.id)}
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-500 text-white transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                >
+                  <ChevronDown size={16} />
+                </button>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold text-gray-900 truncate">{pay.client_first_name} {pay.client_last_name}</p>
+                  <p className="text-xs text-gray-500 truncate">{pay.amount.toFixed(2)} €</p>
+                </div>
+                {paymentStatusBadge(pay.payment_status)}
+              </div>
+
+              {isExpanded && (
+                <div className="mt-4 space-y-3 border-t border-gray-100 pt-3">
+                  <div className="space-y-2 text-xs">
+                    <div>
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Email</span>
+                      <span className="mt-0.5 block font-medium text-gray-600">{pay.client_email}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Offre</span>
+                        <span className="mt-0.5 block font-semibold text-gray-700">{offerLabel(pay.offer_type)}</span>
+                      </div>
+                      <div>
+                        <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Montant</span>
+                        <span className="mt-0.5 block font-bold text-gray-900">{pay.amount.toFixed(2)} €</span>
+                      </div>
+                      <div>
+                        <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Dossier</span>
+                        {dossier ? (
+                          <span className={`mt-0.5 inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${getStatusColor(dossier.statut)}`}>
+                            {getStatusLabel(dossier.statut)}
+                          </span>
+                        ) : (
+                          <span className="mt-0.5 block font-medium text-gray-400">—</span>
+                        )}
+                      </div>
+                      <div>
+                        <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Date</span>
+                        <span className="mt-0.5 block font-medium text-gray-600">{new Date(pay.created_at).toLocaleDateString('fr-FR')}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-1">
+                    <button
+                      onClick={() => setSelected(pay)}
+                      className="flex w-full items-center justify-center gap-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
+                    >
+                      Détails
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+        {filtered.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
+            Aucun paiement enregistré.
+          </div>
+        )}
+      </div>
+
       {selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="w-full max-w-lg rounded-2xl border border-gray-100 bg-white p-6 shadow-xl">
@@ -183,7 +267,7 @@ export default function PaiementsContent({ payments, dossierMap }: Props) {
               </button>
             </div>
 
-            <div className="space-y-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+            <div className="space-y-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm shadow-black/10">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <span className="block text-xs font-semibold text-gray-400 uppercase">Client</span>

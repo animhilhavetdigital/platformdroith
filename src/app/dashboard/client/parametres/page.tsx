@@ -67,7 +67,7 @@ export default async function ClientParametresPage() {
           <p className="mt-1 text-gray-500">Gérez vos informations personnelles et vos préférences de sécurité</p>
         </div>
 
-        <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm space-y-6">
+        <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm shadow-black/10 space-y-6">
           <div className="flex items-center gap-3 border-b border-gray-50 pb-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
               <User size={22} />

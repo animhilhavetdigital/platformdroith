@@ -77,7 +77,7 @@ export default function DossiersList({ dossiers }: DossiersListProps) {
           return (
             <div 
               key={d.id}
-              className={`relative group rounded-2xl border ${theme.border} ${theme.gradient} p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between cursor-pointer`}
+              className={`relative group rounded-2xl border ${theme.border} ${theme.gradient} p-6 shadow-sm shadow-black/10 hover:shadow-md transition-all flex flex-col justify-between cursor-pointer`}
               onClick={() => router.push(getDossierHref(d))}
             >
               <div className="space-y-4">

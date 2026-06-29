@@ -103,7 +103,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
           </div>
 
           {dossiersAvecRapport.length === 0 ? (
-            <div className="rounded-2xl border border-gray-100 bg-white p-12 text-center shadow-xl shadow-gray-100/50">
+            <div className="rounded-2xl border border-gray-100 bg-white p-12 text-center shadow-sm shadow-black/10">
               <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gray-50">
                 <FileText size={40} className="text-gray-300" />
               </div>
@@ -133,7 +133,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
                 return (
                   <div 
                     key={d.id}
-                    className={`rounded-2xl border ${reportTheme.border} ${reportTheme.gradient} p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between`}
+                    className={`rounded-2xl border ${reportTheme.border} ${reportTheme.gradient} p-6 shadow-sm shadow-black/10 hover:shadow-md transition-all flex flex-col justify-between`}
                   >
                     <div className="space-y-4">
                       {/* Badge and Ref */}
@@ -254,7 +254,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
         </div>
 
         {!hasInitialReport ? (
-          <div className="rounded-2xl border border-gray-100 bg-white p-12 text-center shadow-xl shadow-gray-100/50">
+          <div className="rounded-2xl border border-gray-100 bg-white p-12 text-center shadow-sm shadow-black/10">
             <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gray-50">
               <FileText size={40} className="text-gray-300" />
             </div>
@@ -266,7 +266,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
         ) : (
           <>
             {/* Rapport initial */}
-            <div className="rounded-2xl border border-success-100 bg-white p-8 shadow-xl shadow-gray-100/50">
+            <div className="rounded-2xl border border-success-100 bg-white p-8 shadow-sm shadow-black/10">
               <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
                 <div>
                   <div className="inline-flex items-center gap-2 rounded-full bg-success-50 px-4 py-2 text-xs font-bold uppercase tracking-wider text-success-700 font-sans">
@@ -325,7 +325,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 font-sans">
-              <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+              <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm shadow-black/10">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400">
                   Irrégularités retenues
                 </h3>
@@ -338,7 +338,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
                 </ul>
               </div>
 
-              <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+              <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm shadow-black/10">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400">
                   Recommandations
                 </h3>
@@ -354,7 +354,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
 
             {/* Options après rapport */}
             {showNegotiatorOption && (
-              <div className="rounded-2xl border border-primary-100 bg-primary-50 p-6 shadow-sm font-sans">
+              <div className="rounded-2xl border border-primary-100 bg-primary-50 p-6 shadow-sm shadow-black/10 font-sans">
                 <h3 className="text-lg font-bold text-primary-900">Vous souhaitez être accompagné ?</h3>
                 <p className="mt-2 text-sm text-primary-800">
                   Un négociateur Droit Habitat peut prendre le relais pour une conciliation amiable avec votre organisme de crédit.
@@ -381,7 +381,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
             )}
 
             {isMediationActive && (
-              <div className="rounded-2xl border border-amber-100 bg-amber-50 p-6 shadow-sm font-sans">
+              <div className="rounded-2xl border border-amber-100 bg-amber-50 p-6 shadow-sm shadow-black/10 font-sans">
                 <div className="flex items-center gap-3">
                   <Sparkles size={20} className="text-amber-600" />
                   <div>
@@ -395,7 +395,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
             )}
 
             {isMediationDone && (
-              <div className="rounded-2xl border border-success-100 bg-success-50 p-6 shadow-sm font-sans">
+              <div className="rounded-2xl border border-success-100 bg-success-50 p-6 shadow-sm shadow-black/10 font-sans">
                 <div className="flex items-center gap-3">
                   <CheckCircle size={20} className="text-success-600" />
                   <div>
@@ -409,7 +409,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
             )}
 
             {isAutonomie && (
-              <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm font-sans">
+              <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm shadow-black/10 font-sans">
                 <div className="flex items-center gap-3">
                   <UserCheck size={20} className="text-gray-600" />
                   <div>

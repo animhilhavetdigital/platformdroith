@@ -108,7 +108,7 @@ export default async function ClientSuiviPage() {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm shadow-black/10">
           <div className="flex items-center gap-3 border-b border-gray-50 pb-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
               <Headphones size={20} />
