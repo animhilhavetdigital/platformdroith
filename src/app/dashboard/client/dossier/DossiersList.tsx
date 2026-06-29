@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { 
   FolderOpen, 
   Calendar, 
-  ArrowRight, 
   Info, 
   X, 
   Building, 
@@ -129,25 +128,17 @@ export default function DossiersList({ dossiers }: DossiersListProps) {
                 </div>
               </div>
 
-              {/* Action buttons */}
+              {/* Action button */}
               <div 
-                className="mt-6 pt-4 border-t border-white/60 flex items-center justify-between gap-3"
-                onClick={(e) => e.stopPropagation()} // Prevent card click redirect when clicking action buttons
+                className="mt-6 pt-4 border-t border-white/60"
+                onClick={(e) => e.stopPropagation()} // Prevent card click redirect when clicking action button
               >
                 <button
                   onClick={() => setSelectedDossier(d)}
-                  className={`flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border ${theme.border} bg-white text-xs font-bold text-gray-900 py-3 transition-colors hover:bg-slate-50 shadow-sm`}
+                  className={`w-full inline-flex items-center justify-center gap-1.5 rounded-xl border ${theme.border} ${theme.actionBg} ${theme.actionText} text-xs font-bold py-3 transition-colors shadow-sm`}
                 >
                   <Info size={14} />
                   Informations générales
-                </button>
-
-                <button
-                  onClick={() => router.push(getDossierHref(d))}
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${theme.arrowBg} ${theme.arrowText} transition-colors`}
-                  title="Consulter l'étape"
-                >
-                  <ArrowRight size={16} />
                 </button>
               </div>
             </div>

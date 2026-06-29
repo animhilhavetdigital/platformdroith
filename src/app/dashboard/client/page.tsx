@@ -13,15 +13,11 @@ import {
   CheckCircle, 
   Clock, 
   FileText, 
-  Shield, 
-  ArrowRight, 
   AlertCircle, 
   Plus, 
   Briefcase, 
-  TrendingUp, 
   Layers,
   Banknote,
-  Search,
   Building
 } from 'lucide-react';
 import Link from 'next/link';
@@ -254,19 +250,12 @@ export default async function ClientDashboard({ searchParams }: Props) {
                       </div>
                     </div>
 
-                    <div className="mt-6 pt-4 border-t border-white/60 flex items-center justify-between gap-4">
+                    <div className="mt-6 pt-4 border-t border-white/60">
                       <Link
                         href={getDossierHref(d)}
-                        className={`flex-1 text-center rounded-xl border ${theme.border} bg-white text-xs font-bold text-gray-900 py-3 transition-colors hover:bg-slate-50 shadow-sm font-sans`}
+                        className={`block text-center rounded-xl border ${theme.border} ${theme.actionBg} ${theme.actionText} text-xs font-bold py-3 transition-colors shadow-sm font-sans`}
                       >
                         Consulter l&apos;étape
-                      </Link>
-                      <Link
-                        href={getDossierHref(d)}
-                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${theme.arrowBg} ${theme.arrowText} transition-colors`}
-                        title="Détails"
-                      >
-                        <ArrowRight size={16} />
                       </Link>
                     </div>
                   </div>

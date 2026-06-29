@@ -141,7 +141,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
                         <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 font-mono">
                           Dossier : {d.reference}
                         </span>
-                        <div className={`inline-flex items-center gap-1 text-xs font-bold ${reportTheme.actionText} ${reportTheme.stepBg} px-2.5 py-1 rounded-full`}>
+                        <div className={`inline-flex items-center gap-1 text-xs font-bold ${reportTheme.actionBg} ${reportTheme.actionText} px-2.5 py-1 rounded-full`}>
                           {isMediationReport ? (
                             <>
                               <User size={12} />
@@ -181,7 +181,7 @@ export default async function ClientRapportPage({ searchParams }: Props) {
                     <div className="mt-6 pt-4 border-t border-white/60 flex items-center justify-between gap-3">
                       <Link
                         href={getLinkHref('/dashboard/client/rapport', d.id)}
-                        className={`flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border ${reportTheme.border} bg-white text-xs font-bold text-gray-900 py-3 transition-colors hover:bg-slate-50 shadow-sm`}
+                        className={`flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border ${reportTheme.border} ${reportTheme.actionBgOpacity} text-gray-900 text-xs font-bold py-3 transition-colors shadow-sm`}
                       >
                         {isMediationReport ? 'Consulter le compte-rendu' : 'Consulter le mémoire'}
                         <ArrowRight size={14} />

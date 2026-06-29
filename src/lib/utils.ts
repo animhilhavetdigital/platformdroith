@@ -69,7 +69,7 @@ export function getStatusColor(status: string): string {
 }
 
 export function getDossierCardTheme(status: string) {
-  const themes: Record<string, { name: string; gradient: string; border: string; iconText: string; iconBg: string; stepBg: string; stepText: string; stepDot: string; actionBg: string; actionText: string; arrowBg: string; arrowText: string }> = {
+  const themes: Record<string, { name: string; gradient: string; border: string; iconText: string; iconBg: string; stepBg: string; stepText: string; stepDot: string; actionBg: string; actionBgOpacity: string; actionText: string; arrowBg: string; arrowText: string }> = {
     blue: {
       name: 'blue',
       gradient: 'bg-gradient-to-br from-blue-50 to-white',
@@ -80,6 +80,7 @@ export function getDossierCardTheme(status: string) {
       stepText: 'text-blue-700',
       stepDot: 'bg-blue-500',
       actionBg: 'bg-blue-500 hover:bg-blue-600',
+      actionBgOpacity: 'bg-blue-500/30 hover:bg-blue-500/40',
       actionText: 'text-white',
       arrowBg: 'bg-blue-500 hover:bg-blue-600',
       arrowText: 'text-white',
@@ -94,6 +95,7 @@ export function getDossierCardTheme(status: string) {
       stepText: 'text-purple-700',
       stepDot: 'bg-purple-500',
       actionBg: 'bg-purple-500 hover:bg-purple-600',
+      actionBgOpacity: 'bg-purple-500/30 hover:bg-purple-500/40',
       actionText: 'text-white',
       arrowBg: 'bg-purple-500 hover:bg-purple-600',
       arrowText: 'text-white',
@@ -108,6 +110,7 @@ export function getDossierCardTheme(status: string) {
       stepText: 'text-green-700',
       stepDot: 'bg-green-500',
       actionBg: 'bg-green-500 hover:bg-green-600',
+      actionBgOpacity: 'bg-green-500/30 hover:bg-green-500/40',
       actionText: 'text-white',
       arrowBg: 'bg-green-500 hover:bg-green-600',
       arrowText: 'text-white',
@@ -122,6 +125,7 @@ export function getDossierCardTheme(status: string) {
       stepText: 'text-amber-700',
       stepDot: 'bg-amber-500',
       actionBg: 'bg-amber-500 hover:bg-amber-600',
+      actionBgOpacity: 'bg-amber-500/30 hover:bg-amber-500/40',
       actionText: 'text-white',
       arrowBg: 'bg-amber-500 hover:bg-amber-600',
       arrowText: 'text-white',
@@ -136,6 +140,7 @@ export function getDossierCardTheme(status: string) {
       stepText: 'text-teal-700',
       stepDot: 'bg-teal-500',
       actionBg: 'bg-teal-500 hover:bg-teal-600',
+      actionBgOpacity: 'bg-teal-500/30 hover:bg-teal-500/40',
       actionText: 'text-white',
       arrowBg: 'bg-teal-500 hover:bg-teal-600',
       arrowText: 'text-white',

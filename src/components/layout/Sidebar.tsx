@@ -19,7 +19,6 @@ import {
   Mail,
   ChevronDown,
   LogOut,
-  Shield,
 } from 'lucide-react';
 import { UserRole } from '@/types';
 
@@ -201,31 +200,6 @@ export default function Sidebar({ role, canSwitchRoles = false }: SidebarProps) 
           );
         })}
       </nav>
-
-      {/* Need Help Card */}
-      <div className="px-2 mt-auto mb-4">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-800 to-primary-900 p-5 text-white shadow-xl shadow-primary-900/10">
-          {/* Decorative circles */}
-          <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-white/5" />
-          <div className="absolute -left-6 -bottom-6 h-20 w-20 rounded-full bg-white/5" />
-
-          <div className="relative z-10">
-            <div className="flex h-8 w-8 items-center justify-center rounded-2xl bg-white/10 text-white backdrop-blur-md mb-3.5">
-              <Shield size={16} />
-            </div>
-            <h4 className="text-xs font-bold tracking-wide uppercase">Besoin d&apos;aide ?</h4>
-            <p className="mt-1 text-[10px] text-primary-200 font-medium leading-relaxed">
-              Consultez notre guide de la plateforme en local.
-            </p>
-            <a
-              href="/doc"
-              className="mt-4 block w-full rounded-2xl bg-white py-2 text-center text-[10px] font-bold uppercase tracking-wider text-slate-800 shadow-md transition-all hover:bg-slate-50 hover:scale-[1.02]"
-            >
-              Documentation
-            </a>
-          </div>
-        </div>
-      </div>
 
       {/* Footer */}
       <div className="px-2 border-t border-slate-800/60 pt-4">
